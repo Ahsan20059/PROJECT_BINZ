@@ -1,13 +1,13 @@
 const scrapItems = [
-  { name: "Newspaper", rate: "Rs 14/kg", category: "normal", note: "Market rate tracked for household paper.", icon: "newspaper" },
-  { name: "Glass bottles", rate: "Rs 2/kg", category: "normal", note: "Accepted with mixed scrap pickup.", icon: "wine" },
-  { name: "Copies/books", rate: "Rs 12/kg", category: "normal", note: "Books and notebooks for paper recovery.", icon: "book-open" },
-  { name: "PET bottles", rate: "Rs 8/kg", category: "normal", note: "Clean plastic bottles and containers.", icon: "pet-bottle" },
-  { name: "Iron", rate: "Rs 26/kg", category: "normal", note: "Bulk quote available for heavy items.", icon: "anchor" },
-  { name: "Steel", rate: "Rs 40/kg", category: "normal", note: "Utensils, frames and small steel scrap.", icon: "hard-hat" },
-  { name: "Aluminium", rate: "Rs 105/kg", category: "normal", note: "Cans, frames and clean aluminium scrap.", icon: "package-open" },
-  { name: "Copper wire", rate: "Rs 650/kg", category: "normal", note: "Higher value depends on quality.", icon: "cable" },
-  { name: "Cardboard", rate: "Rs 8/kg", category: "normal", note: "Flattened boxes and packaging.", icon: "package" },
+  { name: "Newspaper", rate: "₹14/kg", category: "normal", note: "Market rate tracked for household paper.", icon: "newspaper" },
+  { name: "Glass bottles", rate: "₹2/kg", category: "normal", note: "Accepted with mixed scrap pickup.", icon: "wine" },
+  { name: "Copies/books", rate: "₹12/kg", category: "normal", note: "Books and notebooks for paper recovery.", icon: "book-open" },
+  { name: "PET bottles", rate: "₹8/kg", category: "normal", note: "Clean plastic bottles and containers.", icon: "pet-bottle" },
+  { name: "Iron", rate: "₹26/kg", category: "normal", note: "Bulk quote available for heavy items.", icon: "anchor" },
+  { name: "Steel", rate: "₹40/kg", category: "normal", note: "Utensils, frames and small steel scrap.", icon: "hard-hat" },
+  { name: "Aluminium", rate: "₹105/kg", category: "normal", note: "Cans, frames and clean aluminium scrap.", icon: "package-open" },
+  { name: "Copper wire", rate: "₹650/kg", category: "normal", note: "Higher value depends on quality.", icon: "cable" },
+  { name: "Cardboard", rate: "₹8/kg", category: "normal", note: "Flattened boxes and packaging.", icon: "package" },
   { name: "Washing machine", rate: "Quote", category: "appliance", note: "Schedule inspection for pickup value.", icon: "washing-machine" },
   { name: "Refrigerator", rate: "Quote", category: "appliance", note: "Condition-based rate and safe handling.", icon: "archive" },
   { name: "Laptop", rate: "Ticket", category: "ewaste", note: "Raise an e-waste ticket for recovery.", icon: "laptop" },
@@ -159,10 +159,11 @@ function renderLeaderboard() {
   const merged = [...defaultLeaders, { name: currentName, coins: state.coins }]
     .sort((a, b) => b.coins - a.coins)
     .slice(0, 4);
+  const medals = ["🥇", "🥈", "🥉"];
 
   qs("#leaderboardRows").innerHTML = merged.map((user, index) => `
     <div class="leader-row">
-      <span>${index === 0 ? `<span class="rank-badge">1</span>` : `${index + 1}.`}</span>
+      <span>${index < 3 ? `<span class="rank-medal" aria-label="Rank ${index + 1}">${medals[index]}</span>` : `<span class="rank-plain">${index + 1}.</span>`}</span>
       <span>${user.name}</span>
       <span>${user.coins}</span>
     </div>
