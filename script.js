@@ -96,7 +96,7 @@ async function refreshLeaderboard() {
   } catch (error) {
     // Backend unreachable — fall back to the local demo leaderboard.
     const currentName = state.firstName && state.firstName !== "Guest" ? state.firstName : "Guest";
-    renderLeaderboardRows([...defaultLeaders, { name: currentName, coins: state.coins }]);
+    renderLeaderboardRows([{ name: currentName, coins: state.coins }]);
   }
 }
 
