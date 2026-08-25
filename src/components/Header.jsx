@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Award, ChevronDown, Layers, LogIn, LogOut, Menu, Sprout } from 'lucide-react';
+import { Award, ChevronDown, Gift, Layers, LogIn, LogOut, Menu, Sprout } from 'lucide-react';
 
 export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -55,6 +55,9 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
         <a className="primary-link" href="#home" onClick={handleNavLinkClick}>Home</a>
         <a className="primary-link" href="#scrap" onClick={handleNavLinkClick}>Scrap</a>
         <a className="primary-link" href="#earn" onClick={handleNavLinkClick}>Earn Coins</a>
+        <a className="primary-link donate-link" href="#donate" onClick={handleNavLinkClick}>
+          <Gift size={14} aria-hidden="true" /> Donate
+        </a>
         <div className={`impact-menu${impactOpen ? ' open' : ''}`}>
           <a
             className="primary-link impact-link"

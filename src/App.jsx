@@ -6,6 +6,7 @@ import SignUpPage from './components/SignUpPage';
 import LearnPage from './components/LearnPage';
 import ServicesPage from './components/ServicesPage';
 import CertificationsPage from './components/CertificationsPage';
+import DonatePage from './components/DonatePage';
 import HeroSection from './components/HeroSection';
 import TrustRow from './components/TrustRow';
 import StatsBand from './components/StatsBand';
@@ -143,6 +144,10 @@ function App() {
 
   if (currentPage === '#certifications') {
     return renderStandalonePage(<CertificationsPage />);
+  }
+
+  if (currentPage === '#donate') {
+    return renderStandalonePage(<DonatePage />);
   }
 
   return (
