@@ -1,24 +1,24 @@
 import React from 'react';
-import { ArrowLeft, Leaf, RefreshCw, Recycle } from 'lucide-react';
+import { ArrowLeft, Hammer, RefreshCw, Wrench } from 'lucide-react';
 
 const principles = [
   {
-    icon: Leaf,
-    title: 'Reduce',
-    text: 'Choose only what you need, avoid unnecessary packaging, and make everyday items last longer.',
-    action: 'Buy mindfully',
+    icon: Wrench,
+    title: 'Refurbish',
+    text: 'Repair and refresh useful electronics so they can perform well for longer instead of becoming waste.',
+    action: 'Restore value',
+  },
+  {
+    icon: RefreshCw,
+    title: 'Rebuild',
+    text: 'Replace worn parts, improve what can be improved, and rebuild devices for a reliable second chapter.',
+    action: 'Make it better',
   },
   {
     icon: RefreshCw,
     title: 'Reuse',
-    text: 'Give products a second life by repairing, repurposing, donating, or sharing them with others.',
-    action: 'Use it again',
-  },
-  {
-    icon: Recycle,
-    title: 'Recycle',
-    text: 'Sort clean materials correctly so they can become useful resources instead of ending up in landfill.',
-    action: 'Sort it right',
+    text: 'Pass on working devices, repurpose components, and keep valuable materials in circulation.',
+    action: 'Keep it moving',
   },
 ];
 
@@ -30,12 +30,12 @@ export default function LearnPage() {
       </a>
       <section className="learn-hero" aria-labelledby="learn-title">
         <p className="eyebrow">A smaller footprint starts here</p>
-        <h1 id="learn-title">Reduce. Reuse. Recycle.</h1>
+        <h1 id="learn-title">Refurbish. Rebuild. Reuse.</h1>
         <p>
-          Three simple habits can keep valuable materials in use, reduce waste, and help build a cleaner future.
+          Three practical habits can keep valuable electronics in use, reduce waste, and help build a cleaner future.
         </p>
       </section>
-      <section className="principles-grid" aria-label="The three recycling principles">
+      <section className="principles-grid" aria-label="The three circular technology principles">
         {principles.map(({ icon: Icon, title, text, action }) => (
           <article className="principle-card" key={title}>
             <span className="principle-icon"><Icon size={28} /></span>
