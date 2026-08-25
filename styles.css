@@ -1277,6 +1277,135 @@ textarea:focus {
     grid-template-columns: 1fr;
     gap: 10px;
   }
+ /* Close the previous max-width: 820px media query */
+}
 
-  
+/* Impact dropdown */
+.impact-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.impact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.impact-link svg {
+  transition: transform 0.22s ease;
+}
+
+.impact-menu.open .impact-link svg {
+  transform: rotate(180deg);
+}
+
+.impact-dropdown {
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  z-index: 60;
+  display: grid;
+  gap: 4px;
+  min-width: 240px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.impact-menu.open .impact-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.impact-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  color: var(--ink);
+}
+
+.impact-dropdown a:hover,
+.impact-dropdown a:focus-visible {
+  background: var(--mint);
+}
+
+.impact-icon {
+  display: grid;
+  flex: 0 0 36px;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--pine);
+  border-radius: 10px;
+}
+
+.impact-item-title {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-height: 36px;
+  margin: 0;
+  color: var(--pine);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.impact-dropdown::before {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  content: "";
+  background: #fff;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@media (max-width: 1120px) {
+  .impact-menu {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .impact-dropdown {
+    position: static;
+    display: none;
+    min-width: 220px;
+    margin-top: 8px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .impact-menu.open .impact-dropdown {
+    display: grid;
+  }
+
+  .impact-dropdown::before {
+    display: none;
+  }
+}
+
+@media (max-width: 820px) {
+  .impact-menu {
+    grid-column: 1 / -1;
+  }
 }

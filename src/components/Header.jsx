@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, LogIn, LogOut, Menu } from 'lucide-react';
+import { Award, ChevronDown, Layers, LogIn, LogOut, Menu, Sprout } from 'lucide-react';
 
 export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) {
   const [navOpen, setNavOpen] = useState(false);
+  const [impactOpen, setImpactOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -17,10 +18,17 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
 
   function handleNavToggle() {
     setNavOpen((prev) => !prev);
+    setImpactOpen(false);
   }
 
   function handleNavLinkClick() {
     setNavOpen(false);
+    setImpactOpen(false);
+  }
+
+  function handleImpactToggle(event) {
+    event.preventDefault();
+    setImpactOpen((prev) => !prev);
   }
 
   return (
@@ -47,14 +55,29 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
         <a className="primary-link" href="#home" onClick={handleNavLinkClick}>Home</a>
         <a className="primary-link" href="#scrap" onClick={handleNavLinkClick}>Scrap</a>
         <a className="primary-link" href="#earn" onClick={handleNavLinkClick}>Earn Coins</a>
-        <div className="impact-menu">
-          <a className="primary-link impact-link" href="#tracker" onClick={handleNavLinkClick}>
+        <div className={`impact-menu${impactOpen ? ' open' : ''}`}>
+          <a
+            className="primary-link impact-link"
+            href="#tracker"
+            aria-expanded={impactOpen}
+            aria-controls="impact-dropdown"
+            onClick={handleImpactToggle}
+          >
             Impact <ChevronDown size={15} aria-hidden="true" />
           </a>
-          <div className="impact-dropdown" role="menu">
-            <a href="#certifications" role="menuitem" onClick={handleNavLinkClick}>Certifications</a>
-            <a href="#services" role="menuitem" onClick={handleNavLinkClick}>Other services</a>
-            <a href="#learn" role="menuitem" onClick={handleNavLinkClick}>Know more</a>
+          <div className="impact-dropdown" id="impact-dropdown" role="menu">
+            <a href="#certifications" role="menuitem" onClick={handleNavLinkClick}>
+              <span className="impact-icon"><Award size={15} /></span>
+              <span className="impact-item-title">  Certifications</span>
+            </a>
+            <a href="#services" role="menuitem" onClick={handleNavLinkClick}>
+              <span className="impact-icon"><Layers size={15} /></span>
+              <span className="impact-item-title">  Other services</span>
+            </a>
+            <a href="#learn" role="menuitem" onClick={handleNavLinkClick}>
+              <span className="impact-icon"><Sprout size={15} /></span> 
+              <span className="impact-item-title">  Know more</span>
+            </a>
           </div>
         </div>
         <a className="primary-link" href="#service" onClick={handleNavLinkClick}>Service</a>
