@@ -18,7 +18,7 @@ import TicketDrawer from './components/TicketDrawer';
 import Scrim from './components/Scrim';
 
 function App() {
-  const [coins, setCoins] = useState(() => Number(localStorage.getItem('coins') || 5));
+  const [coins, setCoins] = useState(() => Number(localStorage.getItem('coins') || 0));
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || 'Guest');
   const [entries, setEntries] = useState(() => JSON.parse(localStorage.getItem('impactEntries') || '[]'));
   const [tickets, setTickets] = useState(() => Number(localStorage.getItem('tickets') || 0));

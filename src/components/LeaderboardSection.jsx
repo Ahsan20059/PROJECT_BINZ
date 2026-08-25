@@ -1,11 +1,11 @@
 import React from 'react';
-import { defaultLeaders } from '../data';
+// import { defaultLeaders } from '../data';
 
 const medals = ['🥇', '🥈', '🥉'];
 
 export default function LeaderboardSection({ coins, firstName }) {
   const currentName = firstName && firstName !== 'Guest' ? firstName : 'Guest';
-  const merged = [...defaultLeaders, { name: currentName, coins }]
+  const merged = [ { name: currentName, coins }]
     .sort((a, b) => b.coins - a.coins)
     .slice(0, 4);
 
