@@ -22,7 +22,7 @@ export default function LeaderboardSection({ coins, firstName }) {
           <span>Z-Coins</span>
         </div>
         <div id="leaderboardRows">
-          {merged.map((user, index) => (
+          {users.map((user, index) => (
             <div key={user.name + index} className="leader-row">
               <span>
                 {index < 3 ? (

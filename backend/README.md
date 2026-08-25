@@ -18,9 +18,9 @@ Server runs on `http://localhost:5000` by default (`PORT` in `.env` to change it
 - **Gmail** — optional. Without `EMAIL_USER` / `EMAIL_PASS` (a Gmail **App Password**, not your login password), the ticket confirmation email will silently fail but the ticket is still created.
 - **Video upload (`POST /uploadVideo`)** — currently simulated: waits 5 seconds then awards a random 5-10 coins, no Python/detector script needed. Swap the `setTimeout` body in `server.js` for a real detection call whenever you're ready to wire that up.
 
-## Auth model (current, no-password demo)
+## Auth model
 
-`/register` and `/login` don't require a password — accounts are identified by email only. If you later want real passwords, both routes already support them (pass `password` in the body and it'll be hashed/checked); the frontend just isn't sending one right now.
+`/register` requires a strong password and stores only its bcrypt hash. `/login` requires the email and password, verifies the password against that hash, and rejects both nonexistent accounts and incorrect credentials. New accounts start with five reward coins; users do not receive coins merely by logging in.
 
 ## Endpoints
 

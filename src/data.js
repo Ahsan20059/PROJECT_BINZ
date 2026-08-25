@@ -15,8 +15,3 @@ export const scrapItems = [
   { name: "Battery", rate: "Ticket", category: "ewaste", note: "Separate disposal route for safety.", icon: "BatteryCharging" },
 ];
 
-export const defaultLeaders = [
-  { name: "John Doe", coins: 1200 },
-  { name: "Jane Smith", coins: 980 },
-  { name: "Alice Brown", coins: 870 },
-];
