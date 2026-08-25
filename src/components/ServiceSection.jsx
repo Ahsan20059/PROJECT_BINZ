@@ -26,10 +26,10 @@ export default function ServiceSection({ onOpenTicket, onOpenAccount, onOpenChat
       </article>
       <article className="service-card">
         <MessageCircle size={34} />
-        <h3>Z-Chat</h3>
+        <h3>FAQ</h3>
         <p>Quick answers for booking, contact, e-waste and project details.</p>
         <button className="button secondary" type="button" id="openChatFromCard" onClick={onOpenChat}>
-          Open chat
+          Open FAQs
         </button>
       </article>
     </section>

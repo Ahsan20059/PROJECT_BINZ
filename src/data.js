@@ -15,3 +15,19 @@ export const scrapItems = [
   { name: "Battery", rate: "Ticket", category: "ewaste", note: "Separate disposal route for safety.", icon: "BatteryCharging" },
 ];
 
+export const demoImpactStats = {
+  solidWaste: 182.4,
+  ewaste: 66.2,
+  tickets: 24,
+  co2Reduced: 336.3,
+};
+
+export const demoImpactEntries = [
+  { date: "2026-02-12", solid: 24.8, ewaste: 8.6 },
+  { date: "2026-03-08", solid: 31.2, ewaste: 12.4 },
+  { date: "2026-04-19", solid: 27.6, ewaste: 9.8 },
+  { date: "2026-05-23", solid: 38.1, ewaste: 14.2 },
+  { date: "2026-06-14", solid: 29.7, ewaste: 11.5 },
+  { date: "2026-07-28", solid: 31.0, ewaste: 9.7 },
+];
+

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import TopStrip from './components/TopStrip';
 import Header from './components/Header';
+import SignInPage from './components/SignInPage';
+import SignUpPage from './components/SignUpPage';
 import HeroSection from './components/HeroSection';
 import TrustRow from './components/TrustRow';
 import StatsBand from './components/StatsBand';
@@ -25,19 +27,20 @@ function App() {
   const [openDrawer, setOpenDrawer] = useState(null); // 'chatDrawer' | 'authPanel' | 'ticketPanel' | null
   const [pickupStatus, setPickupStatus] = useState({ msg: '', error: false });
   const [ticketTypePreset, setTicketTypePreset] = useState('');
+  const [currentPage, setCurrentPage] = useState(() => window.location.hash);
 
   useEffect(() => {
     function handleCoinsUpdated(event) {
       const next = Math.max(0, Number(event.detail?.coins));
-      if (Number.isFinite(next)) {
-        setCoins(next);
-        localStorage.setItem('coins', String(next));
-      }
+      if (!Number.isFinite(next)) return;
+      setCoins(next);
+      localStorage.setItem('coins', String(next));
     }
 
     function handleStorage(event) {
-      if (event.key !== 'coins' || event.newValue === null) return;
-      handleCoinsUpdated({ detail: { coins: event.newValue } });
+      if (event.key === 'coins' && event.newValue !== null) {
+        handleCoinsUpdated({ detail: { coins: event.newValue } });
+      }
     }
 
     window.addEventListener('coinsUpdated', handleCoinsUpdated);
@@ -48,10 +51,36 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    function handleHashChange() {
+      setCurrentPage(window.location.hash);
+    }
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   function updateCoins(value) {
     const next = Math.max(0, Number(value));
     if (!Number.isFinite(next)) return;
     window.dispatchEvent(new CustomEvent('coinsUpdated', { detail: { coins: next } }));
+  }
+
+  function handleAuthenticated(account) {
+    const accountName = account.firstName || 'Guest';
+    setFirstName(accountName);
+    localStorage.setItem('firstName', accountName);
+    localStorage.setItem('lastName', account.lastName || '');
+    localStorage.setItem('email', account.email || '');
+    localStorage.setItem('state', account.state || '');
+    updateCoins(account.coins);
+    window.location.hash = '#home';
+  }
+
+  function handleSignOut() {
+    ['firstName', 'lastName', 'email', 'state', 'coins'].forEach((key) => localStorage.removeItem(key));
+    setFirstName('Guest');
+    updateCoins(0);
   }
 
   function handleOpenDrawer(id) {
@@ -74,12 +103,26 @@ function App() {
     setPickupStatus({ msg: `${itemName} selected. Add your phone number to book pickup.`, error: false });
   }
 
+  function handleOpenSignIn() {
+    window.location.hash = '#signin';
+  }
+
+  if (currentPage === '#signin') {
+    return <SignInPage onAuthenticated={handleAuthenticated} />;
+  }
+
+  if (currentPage === '#signup') {
+    return <SignUpPage onAuthenticated={handleAuthenticated} />;
+  }
+
   return (
     <>
       <TopStrip />
       <Header
         coins={coins}
-        onOpenAccount={() => handleOpenDrawer('authPanel')}
+        onOpenAccount={handleOpenSignIn}
+        onSignOut={handleSignOut}
+        isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
       />
       <main>
         <HeroSection

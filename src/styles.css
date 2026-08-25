@@ -80,16 +80,26 @@ textarea {
 .site-header {
   position: sticky;
   top: 0;
+  margin: 0;
   z-index: 50;
   display: grid;
   grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 24px;
   padding: 8px 8vw;
-  background: rgba(255, 255, 255, 0.92);
-  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid transparent;
+  border-radius: 0;
   box-shadow: 0 10px 34px rgba(23, 78, 42, 0.08);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(24px);
+  transition: margin 0.28s ease, top 0.28s ease, border-color 0.28s ease, border-radius 0.28s ease, padding 0.28s ease;
+}
+
+.site-header.scrolled {
+  top: 12px;
+  margin: 0 4vw;
+  border-color: var(--line);
+  border-radius: 18px;
 }
 
 .brand {
@@ -197,8 +207,80 @@ textarea {
   cursor: pointer;
 }
 
+#accountButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: auto;
+  padding: 0 14px;
+  color: var(--pine);
+  font-weight: 800;
+}
+
 .menu-toggle {
   display: none;
+}
+
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 20px;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(111, 143, 75, 0.18), transparent 30%),
+    linear-gradient(135deg, var(--mint), var(--cream));
+}
+
+.auth-card {
+  width: min(100%, 440px);
+  padding: clamp(28px, 6vw, 52px);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 18px;
+  box-shadow: 0 22px 55px rgba(34, 57, 31, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.auth-card h1 {
+  margin-bottom: 14px;
+  font-size: clamp(34px, 7vw, 48px);
+  letter-spacing: -2px;
+}
+
+.auth-intro {
+  margin-bottom: 28px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.auth-card label {
+  color: var(--pine);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.auth-back-link,
+.auth-switch a {
+  color: var(--pine);
+  font-weight: 800;
+}
+
+.auth-back-link {
+  position: absolute;
+  top: 28px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-switch {
+  margin: 22px 0 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
 }
 
 .section-band {
@@ -238,23 +320,33 @@ p {
 h1 {
   max-width: 640px;
   margin-bottom: 22px;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", sans-serif;
   font-size: clamp(38px, 4.7vw, 66px);
   line-height: 1;
-  letter-spacing: 0;
+  font-weight: 500;
+  letter-spacing: -4px;
 }
 
 h2 {
   margin-bottom: 14px;
-  font-family: "Fraunces", Georgia, serif;
+  font-family: "Inter", sans-serif;
   font-size: clamp(30px, 3.6vw, 48px);
   line-height: 1;
-  letter-spacing: 0;
+  font-weight: 500;
+  letter-spacing: -2px;
 }
 
 h3 {
   font-size: 18px;
   line-height: 1.2;
+  font-weight: 600;
+}
+
+.highlight{
+    font-family: "Instrument Serif", serif;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0px;
 }
 
 .hero-text,
@@ -311,11 +403,12 @@ textarea {
   min-height: 48px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.58);
   color: var(--ink);
   padding: 13px 15px;
   font-size: 15px;
   outline: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
   transition: border 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -707,10 +800,12 @@ textarea:focus {
 .service-card,
 .leaderboard,
 .drawer {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 26px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .upload-card {
@@ -904,12 +999,23 @@ textarea:focus {
 }
 
 .site-footer {
+  position: relative;
   display: grid;
   grid-template-columns: 1.25fr 0.65fr 0.65fr 1.2fr;
   gap: 34px;
   padding: 68px 8vw 34px;
-  background: var(--pine);
-  color: #f4faef;
+  background-color: #f4faef;
+  color: var(--pine);
+}
+
+.site-footer::before {
+  position: absolute;
+  top: 0;
+  right: 8vw;
+  left: 8vw;
+  height: 1px;
+  background: rgba(234, 244, 230, 0.3);
+  content: "";
 }
 
 .brand-invert .logo-shell {
@@ -918,13 +1024,12 @@ textarea:focus {
   box-shadow: none;
 }
 
-.footer-brand p,
-.site-footer a {
-  color: #dceccb;
-}
-
 .site-footer h3 {
   margin-bottom: 18px;
+  /* color: #f6ffed; */
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 .site-footer a {
@@ -937,6 +1042,16 @@ textarea:focus {
   grid-template-columns: 1fr auto;
   gap: 10px;
 }
+
+.site-footer input {
+  min-width: 0;
+  border-color: rgba(234, 244, 230, 0.28);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--pine);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
 
 .chat-fab {
   position: fixed;
@@ -1143,9 +1258,13 @@ textarea:focus {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 8px 6vw;
-    width: 100vw;
-    max-width: 100vw;
+    width: auto;
+    max-width: none;
     overflow: visible;
+  }
+
+  .site-header.scrolled {
+    margin: 0 3vw;
   }
 
   .wallet span:last-child {

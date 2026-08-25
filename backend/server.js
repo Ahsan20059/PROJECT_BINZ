@@ -73,6 +73,16 @@ const UserSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", UserSchema);
 
+const LeaderboardEntry = mongoose.model("LeaderboardEntry", new mongoose.Schema({
+    name: { type: String, required: true },
+    coins: { type: Number, required: true },
+}));
+
+const leaderboardNames = [
+    "Aarav Mehta", "Diya Kapoor", "Kabir Shah", "Meera Nair",
+    "Rohan Verma", "Ishita Rao", "Vivaan Singh", "Anaya Joshi",
+];
+
 app.post("/register", registrationLimiter, async (req, res) => {
     try {
         const { firstName, lastName, email, password, state } = req.body;
@@ -202,8 +212,16 @@ app.post("/storePhoneNumber", async (req, res) => {
 
 app.get("/leaderboard", async (req, res) => {
     try {
-        const topUsers = await User.find({}).sort({ coins: -1 }).limit(3).select("firstName email coins _id");
-        res.status(200).json({ leaderboard: topUsers });
+        let entries = await LeaderboardEntry.find({}).sort({ coins: -1 }).limit(8).select("name coins _id");
+        if (entries.length === 0) {
+            const seedEntries = leaderboardNames.map((name) => ({
+                name,
+                coins: Math.floor(Math.random() * 901) + 100,
+            }));
+            await LeaderboardEntry.insertMany(seedEntries);
+            entries = await LeaderboardEntry.find({}).sort({ coins: -1 }).limit(8).select("name coins _id");
+        }
+        res.status(200).json({ leaderboard: entries });
     } catch (error) {
         console.error("❌ Leaderboard Fetch Error:", error);
         res.status(500).json({ message: "❌ Server error" });

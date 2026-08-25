@@ -1,13 +1,19 @@
-import React from 'react';
-// import { defaultLeaders } from '../data';
+import React, { useEffect, useState } from 'react';
 
 const medals = ['🥇', '🥈', '🥉'];
 
-export default function LeaderboardSection({ coins, firstName }) {
-  const currentName = firstName && firstName !== 'Guest' ? firstName : 'Guest';
-  const merged = [ { name: currentName, coins }]
-    .sort((a, b) => b.coins - a.coins)
-    .slice(0, 4);
+export default function LeaderboardSection() {
+  const [entries, setEntries] = useState([]);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/leaderboard`)
+      .then((response) => {
+        if (!response.ok) throw new Error('Unable to load leaderboard');
+        return response.json();
+      })
+      .then((result) => setEntries(result.leaderboard || []))
+      .catch(() => setEntries([]));
+  }, []);
 
   return (
     <section id="leaderboard" className="section padded leaderboard-section">
@@ -22,8 +28,8 @@ export default function LeaderboardSection({ coins, firstName }) {
           <span>Z-Coins</span>
         </div>
         <div id="leaderboardRows">
-          {users.map((user, index) => (
-            <div key={user.name + index} className="leader-row">
+          {entries.map((user, index) => (
+            <div key={user._id || user.name + index} className="leader-row">
               <span>
                 {index < 3 ? (
                   <span className="rank-medal" aria-label={`Rank ${index + 1}`}>{medals[index]}</span>

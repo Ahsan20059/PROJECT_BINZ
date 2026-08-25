@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { Plus } from 'lucide-react';
+import { demoImpactEntries, demoImpactStats } from '../data';
 
 Chart.register(...registerables);
 
@@ -13,10 +14,11 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
   const pieRef = useRef(null);
   const lineChartRef = useRef(null);
   const pieChartRef = useRef(null);
+  const chartEntries = [...demoImpactEntries, ...entries];
 
   const solid = entries.reduce((sum, e) => sum + e.solid, 0);
   const ewaste = entries.reduce((sum, e) => sum + e.ewaste, 0);
-  const co2 = (solid * 0.9 + ewaste * 2.6).toFixed(1);
+  const co2 = (demoImpactStats.co2Reduced + solid * 0.9 + ewaste * 2.6).toFixed(1);
 
   useEffect(() => {
     if (!lineRef.current || !pieRef.current) return;
@@ -24,9 +26,9 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
     if (lineChartRef.current) lineChartRef.current.destroy();
     if (pieChartRef.current) pieChartRef.current.destroy();
 
-    const labels = entries.map((e) => e.date);
-    const solidData = entries.map((e) => Number((e.solid * 0.9).toFixed(2)));
-    const ewasteData = entries.map((e) => Number((e.ewaste * 2.6).toFixed(2)));
+    const labels = chartEntries.map((e) => e.date);
+    const solidData = chartEntries.map((e) => Number((e.solid * 0.9).toFixed(2)));
+    const ewasteData = chartEntries.map((e) => Number((e.ewaste * 2.6).toFixed(2)));
 
     lineChartRef.current = new Chart(lineRef.current, {
       type: 'line',
@@ -35,7 +37,7 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
         datasets: [
           {
             label: 'Solid Waste CO2',
-            data: solidData.length ? solidData : [0],
+            data: solidData,
             borderColor: '#356f38',
             backgroundColor: 'rgba(53,111,56,0.12)',
             tension: 0.35,
@@ -43,7 +45,7 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
           },
           {
             label: 'E-Waste CO2',
-            data: ewasteData.length ? ewasteData : [0],
+            data: ewasteData,
             borderColor: '#0b7c77',
             backgroundColor: 'rgba(11,124,119,0.12)',
             tension: 0.35,
@@ -65,7 +67,7 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
         labels: ['Solid Waste', 'E-Waste'],
         datasets: [
           {
-            data: [solid || 1, ewaste || 0],
+            data: [solid + demoImpactEntries.reduce((sum, e) => sum + e.solid, 0), ewaste + demoImpactEntries.reduce((sum, e) => sum + e.ewaste, 0)],
             backgroundColor: ['#6f8f4b', '#0b7c77'],
             borderWidth: 0,
           },

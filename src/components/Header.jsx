@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
-import { Menu, UserRound } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { LogIn, LogOut, Menu } from 'lucide-react';
 
-export default function Header({ coins, onOpenAccount }) {
+export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) {
   const [navOpen, setNavOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 24);
+    }
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   function handleNavToggle() {
     setNavOpen((prev) => !prev);
@@ -13,7 +24,7 @@ export default function Header({ coins, onOpenAccount }) {
   }
 
   return (
-    <header className="site-header">
+    <header className={`site-header${isScrolled ? ' scrolled' : ''}`}>
       <a className="brand" href="#home" aria-label="BinZ home">
         <span className="logo-shell">
           <img src="/assets/binz-logo-final.png" alt="BinZ" />
@@ -47,10 +58,11 @@ export default function Header({ coins, onOpenAccount }) {
         className="icon-button"
         id="accountButton"
         type="button"
-        aria-label="Open account panel"
-        onClick={onOpenAccount}
+        aria-label={isSignedIn ? 'Sign out' : 'Sign in'}
+        onClick={isSignedIn ? onSignOut : onOpenAccount}
       >
-        <UserRound size={22} />
+        {isSignedIn ? <LogOut size={18} /> : <LogIn size={18} />}
+        <span>{isSignedIn ? 'Sign out' : 'Sign in'}</span>
       </button>
     </header>
   );

@@ -24,11 +24,11 @@ export default function ChatDrawer({ isOpen, onClose }) {
       className={`drawer${isOpen ? ' open' : ''}`}
       id="chatDrawer"
       aria-hidden={!isOpen}
-      aria-label="Z-Chat panel"
+      aria-label="FAQ panel"
     >
       <div className="drawer-head">
         <div>
-          <p className="eyebrow">Z-Chat</p>
+          <p className="eyebrow">FAQ</p>
           <h2>How can BinZ help?</h2>
         </div>
         <button className="icon-button" type="button" aria-label="Close chat" onClick={onClose}>

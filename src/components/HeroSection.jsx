@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarCheck, MapPin } from 'lucide-react';
+import { demoImpactStats } from '../data';
 
 function computeImpact(entries) {
   const solid = entries.reduce((sum, e) => sum + e.solid, 0);
@@ -10,7 +11,7 @@ function computeImpact(entries) {
 
 export default function HeroSection({ entries, updateCoins, coins, pickupStatus, setPickupStatus }) {
   const [phone, setPhone] = useState('');
-  const co2 = computeImpact(entries);
+  const co2 = demoImpactStats.co2Reduced + computeImpact(entries);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -28,7 +29,7 @@ export default function HeroSection({ entries, updateCoins, coins, pickupStatus,
     <section id="home" className="hero section-band">
       <div className="hero-copy">
         <p className="eyebrow">Put your trash back to work</p>
-        <h1>Clean neighborhoods. Fair scrap prices. Rewards you can feel.</h1>
+        <h1>Clean neighborhoods. Fair <span class="highlight">scrap</span> prices.</h1>
         <p className="hero-text">
           BinZ helps homes, hostels and campuses schedule scrap pickups, track their carbon impact,
           raise e-waste tickets and earn Z-Coins for verified recycling habits.
