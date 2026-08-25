@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LogIn, LogOut, Menu } from 'lucide-react';
+import { ChevronDown, LogIn, LogOut, Menu } from 'lucide-react';
 
 export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -44,11 +44,20 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
         className={`primary-nav${navOpen ? ' open' : ''}`}
         aria-label="Primary navigation"
       >
-        <a href="#home" onClick={handleNavLinkClick}>Home</a>
-        <a href="#scrap" onClick={handleNavLinkClick}>Scrap</a>
-        <a href="#earn" onClick={handleNavLinkClick}>Earn Coins</a>
-        <a href="#tracker" onClick={handleNavLinkClick}>Impact</a>
-        <a href="#service" onClick={handleNavLinkClick}>Service</a>
+        <a className="primary-link" href="#home" onClick={handleNavLinkClick}>Home</a>
+        <a className="primary-link" href="#scrap" onClick={handleNavLinkClick}>Scrap</a>
+        <a className="primary-link" href="#earn" onClick={handleNavLinkClick}>Earn Coins</a>
+        <div className="impact-menu">
+          <a className="primary-link impact-link" href="#tracker" onClick={handleNavLinkClick}>
+            Impact <ChevronDown size={15} aria-hidden="true" />
+          </a>
+          <div className="impact-dropdown" role="menu">
+            <a href="#certifications" role="menuitem" onClick={handleNavLinkClick}>Certifications</a>
+            <a href="#services" role="menuitem" onClick={handleNavLinkClick}>Other services</a>
+            <a href="#learn" role="menuitem" onClick={handleNavLinkClick}>Know more</a>
+          </div>
+        </div>
+        <a className="primary-link" href="#service" onClick={handleNavLinkClick}>Service</a>
       </nav>
       <div className="wallet">
         <span id="coinBalance">{coins}</span>
