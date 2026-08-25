@@ -1,19 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 const medals = ['🥇', '🥈', '🥉'];
 
 export default function LeaderboardSection() {
   const [entries, setEntries] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  const loadLeaderboard = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/leaderboard`,
+      );
+
+      if (!response.ok) throw new Error('Unable to load leaderboard');
+
+      const result = await response.json();
+      setEntries(result.leaderboard || []);
+      setHasError(false);
+    } catch {
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/leaderboard`)
-      .then((response) => {
-        if (!response.ok) throw new Error('Unable to load leaderboard');
-        return response.json();
-      })
-      .then((result) => setEntries(result.leaderboard || []))
-      .catch(() => setEntries([]));
-  }, []);
+    loadLeaderboard();
+
+    const refreshInterval = window.setInterval(loadLeaderboard, 15000);
+    window.addEventListener('focus', loadLeaderboard);
+
+    return () => {
+      window.clearInterval(refreshInterval);
+      window.removeEventListener('focus', loadLeaderboard);
+    };
+  }, [loadLeaderboard]);
 
   return (
     <section id="leaderboard" className="section padded leaderboard-section">
@@ -28,7 +50,14 @@ export default function LeaderboardSection() {
           <span>Z-Coins</span>
         </div>
         <div id="leaderboardRows">
-          {entries.map((user, index) => (
+          {isLoading && <p className="leaderboard-message">Loading leaderboard...</p>}
+          {!isLoading && hasError && (
+            <p className="leaderboard-message">Leaderboard is temporarily unavailable.</p>
+          )}
+          {!isLoading && !hasError && entries.length === 0 && (
+            <p className="leaderboard-message">No leaderboard entries yet.</p>
+          )}
+          {!isLoading && !hasError && entries.map((user, index) => (
             <div key={user._id || user.name + index} className="leader-row">
               <span>
                 {index < 3 ? (

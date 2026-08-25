@@ -48,7 +48,7 @@ export default function AuthDrawer({ isOpen, onClose, updateCoins, setFirstName 
       localStorage.setItem('lastName', account.lastName || lName.trim());
       localStorage.setItem('email', account.email || normalizedEmail);
       localStorage.setItem('state', account.state || state.trim());
-      updateCoins(Number(account.coins));
+      updateCoins(Number(account.coins), { persist: false });
       setStatus(`Welcome, ${accountName}. Your wallet has ${account.coins} Z-Coins.`);
     } catch (error) {
       setStatus(error.message || 'Unable to connect to the account service.');

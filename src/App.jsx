@@ -64,10 +64,38 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  function updateCoins(value) {
+  function updateCoins(value, { persist = true } = {}) {
     const next = Math.max(0, Number(value));
     if (!Number.isFinite(next)) return;
+
     window.dispatchEvent(new CustomEvent('coinsUpdated', { detail: { coins: next } }));
+
+    const email = localStorage.getItem('email');
+    const delta = next - coins;
+    if (!persist || !email || delta === 0) return;
+
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/rewardCoins`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, coins: delta }),
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Unable to save coin balance');
+        return response.json();
+      })
+      .then((result) => {
+        if (typeof result.coins === 'number') {
+          window.dispatchEvent(new CustomEvent('coinsUpdated', {
+            detail: { coins: result.coins },
+          }));
+        }
+      })
+      .catch(() => {
+        setPickupStatus({
+          msg: 'Coins updated locally, but could not be saved to your account.',
+          error: true,
+        });
+      });
   }
 
   function handleAuthenticated(account) {
@@ -77,14 +105,14 @@ function App() {
     localStorage.setItem('lastName', account.lastName || '');
     localStorage.setItem('email', account.email || '');
     localStorage.setItem('state', account.state || '');
-    updateCoins(account.coins);
+    updateCoins(account.coins, { persist: false });
     window.location.hash = '#home';
   }
 
   function handleSignOut() {
     ['firstName', 'lastName', 'email', 'state', 'coins'].forEach((key) => localStorage.removeItem(key));
     setFirstName('Guest');
-    updateCoins(0);
+    updateCoins(0, { persist: false });
   }
 
   function handleOpenDrawer(id) {

@@ -212,15 +212,36 @@ app.post("/storePhoneNumber", async (req, res) => {
 
 app.get("/leaderboard", async (req, res) => {
     try {
-        let entries = await LeaderboardEntry.find({}).sort({ coins: -1 }).limit(8).select("name coins _id");
+        let entries = await User.find({})
+            .sort({ coins: -1 })
+            .limit(8)
+            .select("firstName lastName coins _id");
+
+        entries = entries.map((user) => ({
+            _id: user._id,
+            name: `${user.firstName} ${user.lastName}`.trim(),
+            coins: user.coins || 0,
+        }));
+
         if (entries.length === 0) {
-            const seedEntries = leaderboardNames.map((name) => ({
-                name,
-                coins: Math.floor(Math.random() * 901) + 100,
-            }));
-            await LeaderboardEntry.insertMany(seedEntries);
-            entries = await LeaderboardEntry.find({}).sort({ coins: -1 }).limit(8).select("name coins _id");
+            entries = await LeaderboardEntry.find({})
+                .sort({ coins: -1 })
+                .limit(8)
+                .select("name coins _id");
+
+            if (entries.length === 0) {
+                const seedEntries = leaderboardNames.map((name) => ({
+                    name,
+                    coins: Math.floor(Math.random() * 901) + 100,
+                }));
+                await LeaderboardEntry.insertMany(seedEntries);
+                entries = await LeaderboardEntry.find({})
+                    .sort({ coins: -1 })
+                    .limit(8)
+                    .select("name coins _id");
+            }
         }
+
         res.status(200).json({ leaderboard: entries });
     } catch (error) {
         console.error("❌ Leaderboard Fetch Error:", error);
