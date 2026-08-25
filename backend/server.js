@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const dotenv = require("dotenv");
 const twilio = require("twilio");
 const multer = require("multer");
@@ -353,7 +353,7 @@ app.post("/submit-ticket", async (req, res) => {
 });
 
 // ✅ Unified Server Start
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
