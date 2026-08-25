@@ -1,0 +1,25 @@
+import React from 'react';
+
+export default function StatsBand({ entries, tickets }) {
+  const solid = entries.reduce((sum, e) => sum + e.solid, 0);
+  const ewaste = entries.reduce((sum, e) => sum + e.ewaste, 0);
+  const totalWaste = (solid + ewaste).toFixed(1);
+  const bottleEquivalent = Math.round(solid * 22).toLocaleString('en-IN');
+
+  return (
+    <section className="stats-band">
+      <article className="stat-card">
+        <span id="wasteStat">{totalWaste} kg</span>
+        <p>Waste recycled</p>
+      </article>
+      <article className="stat-card">
+        <span id="bottleStat">{bottleEquivalent}</span>
+        <p>Plastic bottle equivalent</p>
+      </article>
+      <article className="stat-card">
+        <span id="ticketStat">{tickets}</span>
+        <p>E-waste tickets raised</p>
+      </article>
+    </section>
+  );
+}

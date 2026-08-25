@@ -13,8 +13,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # Uploads and generated files
-backend/uploads/*
-!backend/uploads/.gitkeep
+# backend/uploads/*
+# !backend/uploads/.gitkeep
 
 # macOS
 .DS_Store
