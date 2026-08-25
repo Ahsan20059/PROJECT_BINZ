@@ -52,8 +52,6 @@ const validateEmail = (email) => {
     return validator.isEmail(email);
 };
 
-// Password rules only apply when a password is actually supplied.
-// The current frontend runs a no-password demo flow (email as identifier).
 const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
@@ -68,10 +66,10 @@ const UserSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
     email: { type: String, unique: true },
-    password: String,
+    password: { type: String, required: true },
     state: String,
     phoneNumber: String,
-    coins: { type: Number, default: 5 },
+    coins: { type: Number, default: 0 },
 });
 const User = mongoose.model("User", UserSchema);
 
@@ -80,8 +78,8 @@ app.post("/register", registrationLimiter, async (req, res) => {
         const { firstName, lastName, email, password, state } = req.body;
         console.log("📥 Received data:", req.body);
 
-        if (!firstName || !lastName || !email || !state) {
-            return res.status(400).json({ message: "First name, last name, email and state are required!" });
+        if (!firstName || !lastName || !email || !password || !state) {
+            return res.status(400).json({ message: "First name, last name, email, password and state are required!" });
         }
 
         const sanitizedFirstName = sanitizeInput(firstName);
@@ -93,16 +91,12 @@ app.post("/register", registrationLimiter, async (req, res) => {
             return res.status(400).json({ message: "Please enter a valid email address!" });
         }
 
-        // Password is optional in demo mode. If one is provided, still enforce strength rules.
-        let hashedPassword;
-        if (password) {
-            if (!validatePassword(password)) {
-                return res.status(400).json({
-                    message: "Password must be at least 8 characters with uppercase, lowercase, number, and special character!"
-                });
-            }
-            hashedPassword = await bcrypt.hash(password, 12);
+        if (!validatePassword(password)) {
+            return res.status(400).json({
+                message: "Password must be at least 8 characters with uppercase, lowercase, number, and special character!"
+            });
         }
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         const existingUser = await User.findOne({ email: sanitizedEmail.toLowerCase() });
         if (existingUser) {
@@ -124,6 +118,7 @@ app.post("/register", registrationLimiter, async (req, res) => {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
                 email: savedUser.email,
+                state: savedUser.state,
                 coins: savedUser.coins
             }
         });
@@ -149,17 +144,17 @@ app.post("/login", async (req, res) => {
             return res.status(400).json({ message: "❌ Invalid credentials!" });
         }
 
-        // Demo mode: if the account has no password on file, log in by email alone.
-        if (user.password) {
-            if (!password || !(await bcrypt.compare(password, user.password))) {
-                return res.status(400).json({ message: "❌ Invalid credentials!" });
-            }
+        if (!password || !user.password || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ message: "❌ Invalid credentials!" });
         }
 
         res.status(200).json({
             message: "✅ Login successful!",
             firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
+            state: user.state,
+            phoneNumber: user.phoneNumber,
             coins: user.coins || 0,
         });
     } catch (error) {

@@ -226,7 +226,7 @@ Defined in `backend/server.js` with these fields:
 - `password`: bcrypt hash
 - `state`: string
 - `phoneNumber`: string, optional
-- `coins`: number, default `5`
+- `coins`: number, default `0`; registration explicitly awards `5` coins
 
 ### Ticket
 

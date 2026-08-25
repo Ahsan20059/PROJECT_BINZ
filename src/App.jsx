@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TopStrip from './components/TopStrip';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
@@ -18,7 +18,7 @@ import TicketDrawer from './components/TicketDrawer';
 import Scrim from './components/Scrim';
 
 function App() {
-  const [coins, setCoins] = useState(() => Number(localStorage.getItem('coins') || 5));
+  const [coins, setCoins] = useState(() => Number(localStorage.getItem('coins') || 0));
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || 'Guest');
   const [entries, setEntries] = useState(() => JSON.parse(localStorage.getItem('impactEntries') || '[]'));
   const [tickets, setTickets] = useState(() => Number(localStorage.getItem('tickets') || 0));
@@ -26,10 +26,32 @@ function App() {
   const [pickupStatus, setPickupStatus] = useState({ msg: '', error: false });
   const [ticketTypePreset, setTicketTypePreset] = useState('');
 
+  useEffect(() => {
+    function handleCoinsUpdated(event) {
+      const next = Math.max(0, Number(event.detail?.coins));
+      if (Number.isFinite(next)) {
+        setCoins(next);
+        localStorage.setItem('coins', String(next));
+      }
+    }
+
+    function handleStorage(event) {
+      if (event.key !== 'coins' || event.newValue === null) return;
+      handleCoinsUpdated({ detail: { coins: event.newValue } });
+    }
+
+    window.addEventListener('coinsUpdated', handleCoinsUpdated);
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      window.removeEventListener('coinsUpdated', handleCoinsUpdated);
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
+
   function updateCoins(value) {
     const next = Math.max(0, Number(value));
-    setCoins(next);
-    localStorage.setItem('coins', String(next));
+    if (!Number.isFinite(next)) return;
+    window.dispatchEvent(new CustomEvent('coinsUpdated', { detail: { coins: next } }));
   }
 
   function handleOpenDrawer(id) {

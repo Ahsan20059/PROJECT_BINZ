@@ -1,13 +1,9 @@
 import React from 'react';
-import { defaultLeaders } from '../data';
 
 const medals = ['🥇', '🥈', '🥉'];
 
 export default function LeaderboardSection({ coins, firstName }) {
-  const currentName = firstName && firstName !== 'Guest' ? firstName : 'Guest';
-  const merged = [...defaultLeaders, { name: currentName, coins }]
-    .sort((a, b) => b.coins - a.coins)
-    .slice(0, 4);
+  const users = firstName && firstName !== 'Guest' ? [{ name: firstName, coins }] : [];
 
   return (
     <section id="leaderboard" className="section padded leaderboard-section">
@@ -22,7 +18,7 @@ export default function LeaderboardSection({ coins, firstName }) {
           <span>Z-Coins</span>
         </div>
         <div id="leaderboardRows">
-          {merged.map((user, index) => (
+          {users.map((user, index) => (
             <div key={user.name + index} className="leader-row">
               <span>
                 {index < 3 ? (
