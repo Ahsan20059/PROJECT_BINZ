@@ -3,6 +3,9 @@ import TopStrip from './components/TopStrip';
 import Header from './components/Header';
 import SignInPage from './components/SignInPage';
 import SignUpPage from './components/SignUpPage';
+import LearnPage from './components/LearnPage';
+import ServicesPage from './components/ServicesPage';
+import CertificationsPage from './components/CertificationsPage';
 import HeroSection from './components/HeroSection';
 import TrustRow from './components/TrustRow';
 import StatsBand from './components/StatsBand';
@@ -107,12 +110,39 @@ function App() {
     window.location.hash = '#signin';
   }
 
+  function renderStandalonePage(page) {
+    return (
+      <>
+        <TopStrip />
+        <Header
+          coins={coins}
+          onOpenAccount={handleOpenSignIn}
+          onSignOut={handleSignOut}
+          isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
+        />
+        {page}
+      </>
+    );
+  }
+
   if (currentPage === '#signin') {
-    return <SignInPage onAuthenticated={handleAuthenticated} />;
+    return renderStandalonePage(<SignInPage onAuthenticated={handleAuthenticated} />);
   }
 
   if (currentPage === '#signup') {
-    return <SignUpPage onAuthenticated={handleAuthenticated} />;
+    return renderStandalonePage(<SignUpPage onAuthenticated={handleAuthenticated} />);
+  }
+
+  if (currentPage === '#learn') {
+    return renderStandalonePage(<LearnPage />);
+  }
+
+  if (currentPage === '#services') {
+    return renderStandalonePage(<ServicesPage />);
+  }
+
+  if (currentPage === '#certifications') {
+    return renderStandalonePage(<CertificationsPage />);
   }
 
   return (
