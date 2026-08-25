@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import TopStrip from './components/TopStrip';
 import Header from './components/Header';
 import SignInPage from './components/SignInPage';
@@ -24,7 +24,7 @@ import TicketDrawer from './components/TicketDrawer';
 import Scrim from './components/Scrim';
 
 function App() {
-  const [coins, setCoins] = useState(() => Number(localStorage.getItem('coins') || 0));
+  const [coins, setCoins] = useState(0);
   const [firstName, setFirstName] = useState(() => localStorage.getItem('firstName') || 'Guest');
   const [entries, setEntries] = useState(() => JSON.parse(localStorage.getItem('impactEntries') || '[]'));
   const [tickets, setTickets] = useState(() => Number(localStorage.getItem('tickets') || 0));
@@ -33,36 +33,64 @@ function App() {
   const [ticketTypePreset, setTicketTypePreset] = useState('');
   const [currentPage, setCurrentPage] = useState(() => window.location.hash);
 
+  const refreshCoins = useCallback(async () => {
+    const email = localStorage.getItem('email');
+    if (!email) {
+      setCoins(0);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/getCoins/${encodeURIComponent(email)}`,
+      );
+      if (!response.ok) throw new Error('Unable to load coin balance');
+
+      const result = await response.json();
+      if (typeof result.coins === 'number') setCoins(Math.max(0, result.coins));
+    } catch {
+      setPickupStatus({
+        msg: 'Unable to refresh your Z-Coins right now.',
+        error: true,
+      });
+    }
+  }, []);
+
   useEffect(() => {
+    localStorage.removeItem('coins');
+
     function handleCoinsUpdated(event) {
       const next = Math.max(0, Number(event.detail?.coins));
       if (!Number.isFinite(next)) return;
       setCoins(next);
-      localStorage.setItem('coins', String(next));
-    }
-
-    function handleStorage(event) {
-      if (event.key === 'coins' && event.newValue !== null) {
-        handleCoinsUpdated({ detail: { coins: event.newValue } });
-      }
     }
 
     window.addEventListener('coinsUpdated', handleCoinsUpdated);
-    window.addEventListener('storage', handleStorage);
     return () => {
       window.removeEventListener('coinsUpdated', handleCoinsUpdated);
-      window.removeEventListener('storage', handleStorage);
     };
   }, []);
 
   useEffect(() => {
     function handleHashChange() {
       setCurrentPage(window.location.hash);
+      refreshCoins();
     }
 
+    function handleVisibilityChange() {
+      if (document.visibilityState === 'visible') refreshCoins();
+    }
+
+    refreshCoins();
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+    window.addEventListener('focus', refreshCoins);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('focus', refreshCoins);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refreshCoins]);
 
   function updateCoins(value, { persist = true } = {}) {
     const next = Math.max(0, Number(value));
@@ -92,7 +120,7 @@ function App() {
       })
       .catch(() => {
         setPickupStatus({
-          msg: 'Coins updated locally, but could not be saved to your account.',
+          msg: 'Coins updated on screen, but could not be saved to your account.',
           error: true,
         });
       });
@@ -106,11 +134,12 @@ function App() {
     localStorage.setItem('email', account.email || '');
     localStorage.setItem('state', account.state || '');
     updateCoins(account.coins, { persist: false });
+    refreshCoins();
     window.location.hash = '#home';
   }
 
   function handleSignOut() {
-    ['firstName', 'lastName', 'email', 'state', 'coins'].forEach((key) => localStorage.removeItem(key));
+    ['firstName', 'lastName', 'email', 'state'].forEach((key) => localStorage.removeItem(key));
     setFirstName('Guest');
     updateCoins(0, { persist: false });
   }
