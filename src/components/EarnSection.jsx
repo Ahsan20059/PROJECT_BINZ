@@ -14,7 +14,7 @@ export default function EarnSection({ coins, updateCoins }) {
     setTimeout(() => {
       updateCoins(coins + reward);
       setUploadStatus(`Coins rewarded: ${reward} Z-Coins`);
-    }, 650);
+    }, 1500);
   }
 
   function handleFileChange(e) {
