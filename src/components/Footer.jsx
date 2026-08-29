@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="footer-brand">
         <a className="brand brand-invert" href="#home">
           <span className="logo-shell">
-            <img src="/assets/binz-logo-final.png" alt="BinZ" />
+            <img src="/public/binz-logo-final.png" alt="BinZ" />
           </span>
         </a>
         <p>Address: Greater Noida</p>

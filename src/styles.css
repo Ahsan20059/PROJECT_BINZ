@@ -1351,7 +1351,7 @@ textarea:focus {
   padding: clamp(38px, 6vw, 76px);
   background:
     linear-gradient(90deg, rgba(239, 246, 229, 0.96), rgba(244, 238, 212, 0.82)),
-    url("/assets/binz-hero-recycling.png");
+    url("/public/binz-hero-recycling.png");
   background-size: cover;
   background-position: center;
   border: 1px solid var(--line);

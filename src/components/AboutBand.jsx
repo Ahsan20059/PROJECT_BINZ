@@ -16,7 +16,7 @@ export default function AboutBand() {
           can become cleaner, more accountable and easier to scale.
         </p>
       </div>
-      <img src="/assets/binz-community-recycling.png" alt="Volunteer collecting waste outdoors" />
+      <img src="/public/binz-community-recycling.png" alt="Volunteer collecting waste outdoors" />
     </section>
   );
 }
