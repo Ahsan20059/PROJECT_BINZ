@@ -225,7 +225,7 @@ export default function HeroSection({
 
       <div className="hero-visual" aria-label="Recycling collection preview">
         <img
-          src="/public/binz-hero-recycling.png"
+          src="/binz-hero-recycling.png"
           alt="Sorted recyclable materials ready for collection"
         />
 

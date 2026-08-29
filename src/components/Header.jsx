@@ -35,7 +35,7 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
     <header className={`site-header${isScrolled ? ' scrolled' : ''}`}>
       <a className="brand" href="#home" aria-label="BinZ home">
         <span className="logo-shell">
-          <img src="/public/binz-logo-final.png" alt="BinZ" />
+          <img src="/binz-logo-final.png" alt="BinZ" />
         </span>
       </a>
       <button
