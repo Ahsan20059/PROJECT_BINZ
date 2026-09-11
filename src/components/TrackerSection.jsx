@@ -1,9 +1,157 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
-import { Plus } from 'lucide-react';
+import {
+  CheckCircle2,
+  ClipboardCopy,
+  FileText,
+  Laptop,
+  Leaf,
+  MapPin,
+  Plus,
+  Recycle,
+  Settings,
+} from 'lucide-react';
 import { demoImpactEntries, demoImpactStats } from '../data';
 
 Chart.register(...registerables);
+
+const trackedDevice = {
+  name: 'Dell Inspiron 15',
+  type: 'Laptop (E-waste)',
+  id: 'BINZ-48291',
+  status: 'Processing',
+  statusNote: 'At recycling facility',
+  facility: 'Greater Noida, UP',
+};
+
+const trackingSteps = [
+  { label: 'Picked Up', time: '8 Sep, 10:42 AM', icon: CheckCircle2, state: 'done' },
+  { label: 'At Facility', time: '8 Sep, 4:20 PM', icon: CheckCircle2, state: 'done' },
+  { label: 'Processing', time: '9 Sep, 10:32 AM', icon: Settings, state: 'active' },
+  { label: 'Material Recovery', time: 'Pending', icon: Leaf, state: 'pending' },
+  { label: 'Final Disposal', time: 'Pending', icon: Recycle, state: 'pending' },
+];
+
+export function EWasteTracker() {
+  const [copyStatus, setCopyStatus] = useState('');
+
+  async function handleCopyId() {
+    try {
+      await navigator.clipboard.writeText(trackedDevice.id);
+      setCopyStatus('Tracking ID copied');
+    } catch {
+      setCopyStatus('Tracking ID ready to copy');
+    }
+  }
+
+  return (
+    <div className="ewaste-tracker">
+      <section className="binz-demo-section" aria-labelledby="binz-demo-title">
+        <div className="binz-demo-copy">
+          <p className="eyebrow">How BinZ works</p>
+          <h3 id="binz-demo-title">A quick look at the pickup and recycling journey</h3>
+          <p>Watch how a request moves from doorstep collection to careful sorting, recovery and responsible recycling.</p>
+        </div>
+        <div className="demo-video-frame">
+          <video
+            className="tracker-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-label="BinZ pickup and recycling demonstration"
+          >
+            <source src="/assets/binz-promotional-video.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </section>
+
+      <div className="tracker-page-hero">
+        <div className="tracker-hero-copy">
+          <p className="eyebrow">Track your e-waste</p>
+          <h2>Your e-waste is on its way to a cleaner tomorrow.</h2>
+          <p className="tracker-lede">Follow pickup progress, facility status and recycling report details from one clean tracking page.</p>
+          <div className="tracker-kicker">
+            <span>
+              <Leaf size={19} aria-hidden="true" />
+              A cleaner Greater Noida, together.
+            </span>
+          </div>
+        </div>
+
+        <article className="device-status-card">
+          <div className="device-visual" aria-hidden="true">
+            <Laptop size={80} />
+          </div>
+          <div className="device-copy">
+            <h3>{trackedDevice.name}</h3>
+            <p>{trackedDevice.type}</p>
+            <button type="button" className="tracking-id" onClick={handleCopyId}>
+              {trackedDevice.id}
+              <ClipboardCopy size={17} aria-hidden="true" />
+            </button>
+            <span className="sr-only" aria-live="polite">{copyStatus}</span>
+          </div>
+          <div className="status-pill">
+            <Settings size={33} aria-hidden="true" />
+            <span>
+              <strong>{trackedDevice.status}</strong>
+              {trackedDevice.statusNote}
+            </span>
+          </div>
+        </article>
+      </div>
+
+      <section className="tracker-journey" aria-labelledby="tracker-journey-title">
+        <div className="tracker-section-heading">
+          <p className="eyebrow">Current journey</p>
+          <h3 id="tracker-journey-title">Five checkpoints from pickup to disposal</h3>
+        </div>
+        <ol className="tracking-timeline" aria-label="E-waste tracking progress">
+          {trackingSteps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <li key={step.label} className={`tracking-step ${step.state}`}>
+                <span className="step-marker">
+                  <Icon size={28} aria-hidden="true" />
+                </span>
+                <strong>{step.label}</strong>
+                <span>{step.time}</span>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
+      <article className="processing-summary">
+        <div className="summary-icon">
+          <Settings size={37} aria-hidden="true" />
+        </div>
+        <div>
+          <h3>Your e-waste is being processed</h3>
+          <p>Your device is currently being dismantled and sorted at our authorized recycling facility in Greater Noida.</p>
+        </div>
+        <div className="facility-copy">
+          <MapPin size={34} aria-hidden="true" />
+          <span>
+            <strong>Recycling Facility</strong>
+            {trackedDevice.facility}
+          </span>
+        </div>
+      </article>
+
+      <div className="report-action">
+        <button type="button" className="button primary report-button" data-report-download>
+          <FileText size={22} aria-hidden="true" />
+          Download Recycling Report
+        </button>
+      </div>
+
+      <p className="tracker-footnote">Small actions. Big impact.</p>
+    </div>
+  );
+}
 
 export default function TrackerSection({ entries, setEntries, tickets, updateCoins, coins }) {
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
@@ -104,7 +252,7 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
   }
 
   return (
-    <section id="tracker" className="section padded impact-section">
+    <section id="tracker" className="section padded impact-section tracker-experience">
       <div className="section-heading align-left">
         <p className="eyebrow">Your environmental contribution</p>
         <h2>Track the CO2 you help reduce</h2>

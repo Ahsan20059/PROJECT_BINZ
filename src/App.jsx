@@ -7,6 +7,7 @@ import LearnPage from './components/LearnPage';
 import ServicesPage from './components/ServicesPage';
 import CertificationsPage from './components/CertificationsPage';
 import DonatePage from './components/DonatePage';
+import EWasteTrackerPage from './components/EWasteTrackerPage';
 import HeroSection from './components/HeroSection';
 import TrustRow from './components/TrustRow';
 import StatsBand from './components/StatsBand';
@@ -22,6 +23,27 @@ import ChatDrawer from './components/ChatDrawer';
 import AuthDrawer from './components/AuthDrawer';
 import TicketDrawer from './components/TicketDrawer';
 import Scrim from './components/Scrim';
+
+const standalonePages = new Set([
+  '#signin',
+  '#signup',
+  '#learn',
+  '#services',
+  '#certifications',
+  '#donate',
+  '#ewaste-tracker',
+]);
+
+const mainPageSections = new Set([
+  '#home',
+  '#scrap',
+  '#earn',
+  '#tracker',
+  '#leaderboard',
+  '#service',
+  '#about',
+  '#contact',
+]);
 
 function App() {
   const [coins, setCoins] = useState(0);
@@ -91,6 +113,24 @@ function App() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [refreshCoins]);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      if (standalonePages.has(currentPage) || currentPage === '#home' || !currentPage) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        return;
+      }
+
+      if (!mainPageSections.has(currentPage)) return;
+
+      const target = document.getElementById(currentPage.slice(1));
+      if (!target) return;
+
+      const headerHeight = document.querySelector('.site-header')?.offsetHeight || 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 18;
+      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' });
+    });
+  }, [currentPage]);
 
   function updateCoins(value, { persist = true } = {}) {
     const next = Math.max(0, Number(value));
@@ -205,6 +245,10 @@ function App() {
 
   if (currentPage === '#donate') {
     return renderStandalonePage(<DonatePage />);
+  }
+
+  if (currentPage === '#ewaste-tracker') {
+    return renderStandalonePage(<EWasteTrackerPage />);
   }
 
   return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { MailCheck, LogIn, MessageCircle } from 'lucide-react';
+import { Laptop, LogIn, MailCheck, MessageCircle } from 'lucide-react';
 
 export default function ServiceSection({ onOpenTicket, onOpenAccount, onOpenChat }) {
   return (
@@ -31,6 +31,17 @@ export default function ServiceSection({ onOpenTicket, onOpenAccount, onOpenChat
         <button className="button secondary" type="button" id="openChatFromCard" onClick={onOpenChat}>
           Open FAQs
         </button>
+      </article>
+      <article className="service-card">
+        <Laptop size={34} />
+        <h3>Track your E-waste</h3>
+        <p>Check pickup progress, facility status and recycling report details.</p>
+        <a
+          className="button secondary"
+          href="#ewaste-tracker"
+        >
+          Open tracker
+        </a>
       </article>
     </section>
   );

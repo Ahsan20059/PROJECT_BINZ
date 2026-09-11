@@ -1,31 +1,74 @@
 **Findings**
-- No P0/P1/P2 issues remain after the responsive fixes.
+- No P0/P1/P2 issues found for the requested larger tracker-page demo section, demo-first ordering, demo video section, recycling report CTA simplification, tracker-page navbar section routing, tracker heading font match, top-of-page tracker navigation, tracker page redesign, duplicate-logo removal, Service Hub button alignment, and tracker page navigation.
 
 **Source Visual Truth**
-- Reference image: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-d9ec82b5-0259-4b00-bd4d-2e9358159e33.png`
-- Product/context screenshots: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-5c851b65-1ac6-4b0b-88ae-650fe554fb34.png` through the provided BinZ sample set.
+- Service Hub reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-9aa4753e-5f9b-4312-b2c1-ae79b727cb5d.png`
+- Earlier e-waste tracker reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-e61c1329-6338-46d8-9a81-1cd8fca412fb.png`
+- FAQ opacity reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-9577959d-ea63-4790-92ee-0e72f102826c.png`
+- Latest tracker page correction: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-d29519cf-2eae-4a80-9668-43ea3e08d4fb.png`
+- Tracker typography correction: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-20a5e35c-0fc0-4b26-8392-07f0afc7f18c.png`
+- Tracker heading font reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-32b20dbb-3fb8-4a46-8fe2-9b4a1a4bfa82.png`
+- Recycling report CTA simplification reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-d6301494-b661-441d-ae21-db3154de7e2d.png`
+- Tracker demo video placement correction: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-6e94ebb8-8406-401a-a9ec-f2b7bdab2d1e.png`
+- Tracker autoplay video source: `C:\Users\priya\OneDrive\Desktop\BinZ Promotional Video.mp4`
+- Page style examples: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-bb8fd4fd-26a7-4479-8f0a-43c55c7779d7.png`, `C:\Users\priya\AppData\Local\Temp\codex-clipboard-2b3144e5-0942-4847-a6f9-1e2b23ab4b22.png`
 
 **Implementation Evidence**
-- Local URL: `http://127.0.0.1:5500/index.html`
-- Desktop screenshot: `C:\Users\priya\OneDrive\Desktop\BinZ\binz-desktop-preview.png`
-- Mobile screenshot: `C:\Users\priya\OneDrive\Desktop\BinZ\binz-mobile-preview.png`
-- Viewports: desktop `1440 x 1200`, mobile `390 x 1200`
-- Density normalization: Chrome headless with `--force-device-scale-factor=1` for final captures.
-- State: initial page load, wallet at default 5 Z-Coins, empty impact tracker.
+- Service Hub URL: `http://localhost:5503/index.html#service`
+- E-waste tracker page URL: `http://localhost:5503/index.html#ewaste-tracker`
+- Viewport/state: desktop in-app browser, Service Hub visible with four cards and aligned CTAs. The `Open tracker` CTA navigates to a separate e-waste tracker page that uses a page hero/status layout instead of the earlier certificate-like framed panel.
+- Density normalization: none; comparison was evaluated at product-flow level because the request was to align the existing service controls and route the tracker to a new page.
 
-**Comparison Notes**
-- Fonts and typography: the reference's premium ecommerce hierarchy is matched with a serif display headline, compact uppercase nav, and tighter supporting copy. Mobile headline wrapping was fixed after an initial overflow capture.
-- Spacing and layout rhythm: desktop hero now keeps copy and imagery separated with no overlap; mobile uses a single-column layout with compact visible navigation.
-- Colors and visual tokens: deep green, sage, cream and amber accents carry the reference mood while keeping BinZ's recycling identity.
-- Image quality and asset fidelity: remote image dependencies were replaced with local generated PNG assets in `assets/`, preserving the polished product-photography direction.
-- Copy and content: the README flows are represented: pickup booking, scrap catalog/rates, Z-Coins, video reward upload, impact tracker, leaderboard, e-waste ticket, account storage, about/contact and Z-Chat.
+**Required Fidelity Surfaces**
+- Fonts and typography: Uses the existing BinZ Inter/Instrument Serif stack. The new tracker uses strong headline hierarchy, compact status labels, and no text overlap in the captured desktop state.
+- Tracker typography update: The tracker hero heading now follows the same treatment as the learn-page heading reference: Inter, `500` weight, `clamp(38px, 4.7vw, 66px)`, `1` line-height, and `-4px` desktop letter spacing. The lead remains `17px`, and the journey heading remains smaller at `clamp(26px, 2.9vw, 36px)`.
+- Spacing and layout rhythm: The new tracker follows the site page rhythm from the donate/learn examples: open hero area, right-side device status card, full-width journey section, processing summary, and report CTA.
+- Colors and visual tokens: Uses the site tokens for pine, moss, mint, cream, teal and muted text. FAQ drawer opacity is increased to `rgba(251, 250, 242, 0.9)`.
+- Image quality and asset fidelity: Existing BinZ logo asset remains only in the header; the duplicate tracker-body logo was removed. The laptop is represented with the existing Lucide visual language to keep the integration frontend-only and consistent with the current app.
+- Copy/content: The new copy mirrors the reference's e-waste tracking intent and keeps the demo status data local to the frontend.
+
+**Interactions Tested**
+- `Track your E-waste` card is visible in the Service Hub.
+- Button top positions in the Service Hub were aligned at the same y-coordinate in the browser: `Open ticket`, `Open account`, `Open FAQs`, and `Open tracker`.
+- The `Open tracker` CTA navigates to `http://localhost:5503/index.html#ewaste-tracker`.
+- The new page shows `Your e-waste is on its way to a cleaner tomorrow.`
+- Navbar routing from tracker page: `SCRAP`, `EARN COINS`, and `SERVICE` were clicked from `#ewaste-tracker`; each rendered the main page and scrolled directly to `#scrap`, `#earn`, and `#service`.
+- Section scroll check: verified target section tops at `99px` below the viewport top, leaving room for the sticky header.
+- Recycling report CTA check: exactly one `Download Recycling Report` button is present, old `View Full Recycling Report` text is absent, helper sentence is absent, and `.report-panel` is not rendered.
+- Backend hook check: the download button exposes `data-report-download` for future PDF wiring.
+- Demo video placement check: `.device-status-card .tracker-video` count is `0`; `.device-status-card .device-visual svg` exists; `.binz-demo-section .tracker-video` exists at the top of the tracker page.
+- Demo-first order check: `.ewaste-tracker` child order is `binz-demo-section`, `tracker-page-hero`, `tracker-journey`, `processing-summary`, `report-action`.
+- Demo size check: the top `How BinZ works` section now renders larger, with the video frame measured at `640 x 360`, section height `473px`, heading `42px`, and body text `18px` in the verified browser viewport.
+- Autoplay video check: `.tracker-video` exists in the new `How BinZ works` section, uses `/assets/binz-promotional-video.mp4`, and is configured with `autoplay`, `loop`, `muted`, `playsInline`, and `preload="auto"`.
+- Video asset check: `http://localhost:5503/assets/binz-promotional-video.mp4` responds with `200`, `content-type: video/mp4`, and `content-length: 17501347`.
+- Duplicate logo check: `.ewaste-tracker img` count is `0`; header logo count remains `1`.
+- Page-shell check: `.ewaste-tracker` background is transparent, border width is `0px`, and box shadow is `none`.
+- Typography check: Browser-computed tracker hero heading is `60.16px`, Inter, `500`, `-4px` letter spacing and `60.16px` line-height on the verified desktop viewport.
+- Navigation position check: Clicking `Open tracker` from the Service Hub lands on `http://localhost:5503/index.html#ewaste-tracker` with `window.scrollY` equal to `0`; the tracker heading is visible near the top.
+- The original CO2 tracker heading is not present on the standalone e-waste tracker page.
+- Browser console errors checked: none.
+
+**Follow-up Polish**
+- P3: Add a real device/photo asset if the tracker should feel more operational and less icon-led.
 
 **Comparison History**
-- P2 desktop hero overlap: the initial desktop screenshot showed the headline colliding with the hero image. Fixed by reducing the display headline max size and width.
-- P2 mobile overflow: early mobile captures showed clipped text and offscreen header controls. Fixed with mobile-specific header/nav layout, explicit content widths, simplified hero stacking and corrected promo-panel mobile width.
+- Initial implementation passed the requested build gate after interaction checks; no P0/P1/P2 fixes were required.
 
-**Residual Test Gaps**
-- Backend API calls are represented as demo-safe browser-side flows because this workspace only contained `README.md` and no backend/frontend source files.
-- Chart.js and Lucide are loaded from CDNs; they rendered in the verified browser capture, but a fully offline demo would need vendored copies.
+**Implementation Checklist**
+- Added a fourth Service Hub card named `Track your E-waste`.
+- Moved the e-waste tracker design into a reusable `EWasteTracker` component.
+- Routed `Open tracker` to the standalone `#ewaste-tracker` page.
+- Aligned all four Service Hub CTA buttons in one row.
+- Removed the duplicate BinZ logo from the tracker body.
+- Restyled the tracker as an actual website page instead of a certificate-style card.
+- Matched the tracker hero heading to the learn-page heading treatment from the attached reference.
+- Added a standalone-page scroll reset so `Open tracker` starts at the top of the tracker page.
+- Added main-page section scrolling after hash route changes so navbar links from standalone pages land on the requested section.
+- Replaced the expandable recycling report UI with one future-ready `Download Recycling Report` button.
+- Added the supplied promotional MP4 as a muted autoplaying looping video in a separate `How BinZ works` demonstration section on the tracker page.
+- Moved the `How BinZ works` demonstration section to the top of the tracker page, before the e-waste tracking status content.
+- Increased the `How BinZ works` section scale with more padding, a wider video column, a larger video frame, and slightly larger copy.
+- Preserved the original CO2 tracking form and charts in the Impact section.
+- Rebuilt `dist` and copied runtime image assets.
 
 final result: passed

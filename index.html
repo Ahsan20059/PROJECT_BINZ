@@ -6,8 +6,9 @@
     <title>BinZ | Scrap Collection, Recycling Rewards and E-Waste Care</title>
     <script>
       if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
-      window.addEventListener("load", () => window.scrollTo(0, 0));
+      window.addEventListener("load", () => {
+        if (!location.hash) window.scrollTo(0, 0);
+      });
     </script>
     <link rel="icon" href="/assets/binz-logo-final.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
