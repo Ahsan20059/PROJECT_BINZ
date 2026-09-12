@@ -40,6 +40,7 @@
 - Service navbar dropdown check: clicking `SERVICE` opens a dropdown with `E-waste ticket`, `Track e-waste`, and `Help and FAQ`; `Service hub` has been removed.
 - Dropdown alignment check: both `IMPACT` and `SERVICE` dropdown rows now use flex alignment with a fixed-width icon column, an 8px gap, and cleaned label text so icons line up with the text.
 - Dropdown overlap check: opening `IMPACT` sets the Impact dropdown opacity to `1` and Service dropdown opacity to `0`; opening `SERVICE` sets the Impact dropdown opacity to `0` and Service dropdown opacity to `1`.
+- Hover dropdown check: hovering `IMPACT` opens only the Impact dropdown; hovering `SERVICE` opens only the Service dropdown and closes Impact.
 - Service dropdown action check: clicking `E-waste ticket` opens `#ticketPanel` with the `Raise a ticket` form.
 - Service dropdown action check: clicking `Help and FAQ` opens `#chatDrawer` with the `How can BinZ help?` options.
 - Standalone page support check: the shared header now receives the same drawer-opening callbacks on standalone routes as it does on the main page.
@@ -74,7 +75,7 @@
 - Added a Service navbar dropdown that visually matches the Impact dropdown.
 - Removed `Service hub` from the Service navbar dropdown.
 - Aligned the Impact and Service dropdown icons with their text labels.
-- Removed hover-triggered dropdown visibility so adjacent dropdowns cannot remain open and overlap.
+- Added hover/focus-controlled dropdown opening for Impact and Service without allowing overlap.
 - Wired the Service dropdown `E-waste ticket` item to the ticket drawer.
 - Wired the Service dropdown `Help and FAQ` item to the FAQ drawer.
 - Added the shared drawer layer to standalone pages so dropdown drawer actions work away from the homepage too.

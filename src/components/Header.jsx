@@ -53,15 +53,45 @@ export default function Header({
     action?.();
   }
 
+  function openImpactMenu() {
+    setImpactOpen(true);
+    setServiceOpen(false);
+  }
+
+  function openServiceMenu() {
+    setServiceOpen(true);
+    setImpactOpen(false);
+  }
+
+  function closeImpactMenu() {
+    setImpactOpen(false);
+  }
+
+  function closeServiceMenu() {
+    setServiceOpen(false);
+  }
+
+  function handleImpactBlur(event) {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      closeImpactMenu();
+    }
+  }
+
+  function handleServiceBlur(event) {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      closeServiceMenu();
+    }
+  }
+
   function handleImpactToggle(event) {
     event.preventDefault();
-    setImpactOpen((prev) => !prev);
+    setImpactOpen(!impactOpen);
     setServiceOpen(false);
   }
 
   function handleServiceToggle(event) {
     event.preventDefault();
-    setServiceOpen((prev) => !prev);
+    setServiceOpen(!serviceOpen);
     setImpactOpen(false);
   }
 
@@ -92,7 +122,13 @@ export default function Header({
         <a className="primary-link donate-link" href="#donate" onClick={handleNavLinkClick}>
           <Gift size={14} aria-hidden="true" /> Donate
         </a>
-        <div className={`nav-menu impact-menu${impactOpen ? ' open' : ''}`}>
+        <div
+          className={`nav-menu impact-menu${impactOpen ? ' open' : ''}`}
+          onMouseEnter={openImpactMenu}
+          onMouseLeave={closeImpactMenu}
+          onFocus={openImpactMenu}
+          onBlur={handleImpactBlur}
+        >
           <a
             className="primary-link impact-link"
             href="#tracker"
@@ -117,7 +153,13 @@ export default function Header({
             </a>
           </div>
         </div>
-        <div className={`nav-menu service-menu${serviceOpen ? ' open' : ''}`}>
+        <div
+          className={`nav-menu service-menu${serviceOpen ? ' open' : ''}`}
+          onMouseEnter={openServiceMenu}
+          onMouseLeave={closeServiceMenu}
+          onFocus={openServiceMenu}
+          onBlur={handleServiceBlur}
+        >
           <a
             className="primary-link impact-link"
             href="#service"
