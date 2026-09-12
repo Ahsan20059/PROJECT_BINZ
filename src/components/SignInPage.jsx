@@ -25,7 +25,7 @@ export default function SignInPage({ onAuthenticated }) {
 
   return (
     <main className="auth-page">
-      <a className="auth-back-link" href="#home">
+      <a className="auth-back-link" href="#tracker-overview">
         <ArrowLeft size={16} /> Back to BinZ
       </a>
       <section className="auth-card" aria-labelledby="sign-in-title">

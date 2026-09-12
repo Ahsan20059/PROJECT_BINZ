@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Award, ChevronDown, Gift, Layers, LogIn, LogOut, Menu, Sprout } from 'lucide-react';
+import { ClipboardCheck, FileText, LogIn, LogOut, MapPin, Menu, Route } from 'lucide-react';
 
 export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) {
   const [navOpen, setNavOpen] = useState(false);
-  const [impactOpen, setImpactOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -18,22 +17,15 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
 
   function handleNavToggle() {
     setNavOpen((prev) => !prev);
-    setImpactOpen(false);
   }
 
   function handleNavLinkClick() {
     setNavOpen(false);
-    setImpactOpen(false);
-  }
-
-  function handleImpactToggle(event) {
-    event.preventDefault();
-    setImpactOpen((prev) => !prev);
   }
 
   return (
     <header className={`site-header${isScrolled ? ' scrolled' : ''}`}>
-      <a className="brand" href="#home" aria-label="BinZ home">
+      <a className="brand" href="#tracker-overview" aria-label="BinZ tracker overview">
         <span className="logo-shell">
           <img src="/assets/binz-logo-final.png" alt="BinZ" />
         </span>
@@ -50,40 +42,23 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
       <nav
         id="primary-nav"
         className={`primary-nav${navOpen ? ' open' : ''}`}
-        aria-label="Primary navigation"
+        aria-label="Tracker navigation"
       >
-        <a className="primary-link" href="#home" onClick={handleNavLinkClick}>Home</a>
-        <a className="primary-link" href="#scrap" onClick={handleNavLinkClick}>Scrap</a>
-        <a className="primary-link" href="#earn" onClick={handleNavLinkClick}>Earn Coins</a>
-        <a className="primary-link donate-link" href="#donate" onClick={handleNavLinkClick}>
-          <Gift size={14} aria-hidden="true" /> Donate
+        <a className="primary-link" href="#how-it-works" onClick={handleNavLinkClick}>
+          <Route size={14} aria-hidden="true" /> How it works
         </a>
-        <div className={`impact-menu${impactOpen ? ' open' : ''}`}>
-          <a
-            className="primary-link impact-link"
-            href="#tracker"
-            aria-expanded={impactOpen}
-            aria-controls="impact-dropdown"
-            onClick={handleImpactToggle}
-          >
-            Impact <ChevronDown size={15} aria-hidden="true" />
-          </a>
-          <div className="impact-dropdown" id="impact-dropdown" role="menu">
-            <a href="#certifications" role="menuitem" onClick={handleNavLinkClick}>
-              <span className="impact-icon"><Award size={15} /></span>
-              <span className="impact-item-title">  Certifications</span>
-            </a>
-            <a href="#services" role="menuitem" onClick={handleNavLinkClick}>
-              <span className="impact-icon"><Layers size={15} /></span>
-              <span className="impact-item-title">  Other services</span>
-            </a>
-            <a href="#learn" role="menuitem" onClick={handleNavLinkClick}>
-              <span className="impact-icon"><Sprout size={15} /></span> 
-              <span className="impact-item-title">  Know more</span>
-            </a>
-          </div>
-        </div>
-        <a className="primary-link" href="#service" onClick={handleNavLinkClick}>Service</a>
+        <a className="primary-link" href="#tracker-overview" onClick={handleNavLinkClick}>
+          <ClipboardCheck size={14} aria-hidden="true" /> Overview
+        </a>
+        <a className="primary-link" href="#tracker-journey" onClick={handleNavLinkClick}>
+          <Route size={14} aria-hidden="true" /> Journey
+        </a>
+        <a className="primary-link" href="#facility-status" onClick={handleNavLinkClick}>
+          <MapPin size={14} aria-hidden="true" /> Facility
+        </a>
+        <a className="primary-link report-nav-link" href="#recycling-report" onClick={handleNavLinkClick}>
+          <FileText size={14} aria-hidden="true" /> Report
+        </a>
       </nav>
       <div className="wallet">
         <span id="coinBalance">{coins}</span>

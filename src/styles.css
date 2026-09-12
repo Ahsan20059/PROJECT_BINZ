@@ -138,9 +138,13 @@ textarea {
 
 .primary-link {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 10px 0;
 }
 
+.report-nav-link,
 .donate-link {
   display: inline-flex;
   align-items: center;

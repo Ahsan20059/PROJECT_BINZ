@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer id="contact" className="site-footer">
       <div className="footer-brand">
-        <a className="brand brand-invert" href="#home">
+        <a className="brand brand-invert" href="#tracker-overview">
           <span className="logo-shell">
             <img src="/assets/binz-logo-final.png" alt="BinZ" />
           </span>
@@ -15,14 +15,14 @@ export default function Footer() {
       <div>
         <h3>Company</h3>
         <a href="#about">About</a>
-        <a href="#service">Careers</a>
-        <a href="#service">Mobile</a>
+        <a href="#facility-status">Careers</a>
+        <a href="#facility-status">Mobile</a>
       </div>
       <div>
         <h3>Contact</h3>
-        <a href="#service">Help/FAQ</a>
-        <a href="#leaderboard">Press</a>
-        <a href="#scrap">Affiliates</a>
+        <a href="#facility-status">Help/FAQ</a>
+        <a href="#recycling-report">Press</a>
+        <a href="#tracker-journey">Affiliates</a>
       </div>
       <form className="newsletter">
         <h3>Community updates</h3>

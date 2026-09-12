@@ -25,7 +25,7 @@ const principles = [
 export default function LearnPage() {
   return (
     <main className="learn-page">
-      <a className="auth-back-link" href="#home">
+      <a className="auth-back-link" href="#tracker-overview">
         <ArrowLeft size={16} /> Back to BinZ
       </a>
       <section className="learn-hero" aria-labelledby="learn-title">
@@ -51,7 +51,7 @@ export default function LearnPage() {
           <p className="eyebrow">Make it a habit</p>
           <h2>Small choices add up.</h2>
         </div>
-        <a className="button primary" href="#scrap">Find a better next step</a>
+        <a className="button primary" href="#tracker-journey">Find a better next step</a>
       </section>
     </main>
   );

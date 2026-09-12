@@ -6,7 +6,7 @@ export default function CertificationsPage() {
 
   return (
     <main className="certifications-page">
-      <a className="auth-back-link" href="#home">
+      <a className="auth-back-link" href="#tracker-overview">
         <ArrowLeft size={16} /> Back to BinZ
       </a>
       <section className="certificate-intro" aria-labelledby="certifications-title">

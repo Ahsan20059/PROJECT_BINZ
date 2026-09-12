@@ -1,14 +1,14 @@
 import React from 'react';
-import { Trophy, Coins, Phone } from 'lucide-react';
+import { ClipboardCheck, FileText, MapPin } from 'lucide-react';
 
 export default function TopStrip() {
   return (
     <div className="top-strip">
-      <p>Hyper-local scrap pickups across Greater Noida | Earn Z-Coins on every responsible action</p>
-      <div className="strip-links" aria-label="Quick social links">
-        <a href="#leaderboard" aria-label="Leaderboard"><Trophy size={15} /></a>
-        <a href="#earn" aria-label="Earn coins"><Coins size={15} /></a>
-        <a href="#contact" aria-label="Contact"><Phone size={15} /></a>
+      <p>Live e-waste tracking for Greater Noida | Pickup, facility status and recycling report in one place</p>
+      <div className="strip-links" aria-label="Quick tracker links">
+        <a href="#tracker-overview" aria-label="Tracker overview"><ClipboardCheck size={15} /></a>
+        <a href="#facility-status" aria-label="Facility status"><MapPin size={15} /></a>
+        <a href="#recycling-report" aria-label="Recycling report"><FileText size={15} /></a>
       </div>
     </div>
   );

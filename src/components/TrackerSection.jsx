@@ -46,7 +46,7 @@ export function EWasteTracker() {
 
   return (
     <div className="ewaste-tracker">
-      <section className="binz-demo-section" aria-labelledby="binz-demo-title">
+      <section id="how-it-works" className="binz-demo-section" aria-labelledby="binz-demo-title">
         <div className="binz-demo-copy">
           <p className="eyebrow">How BinZ works</p>
           <h3 id="binz-demo-title">A quick look at the pickup and recycling journey</h3>
@@ -67,7 +67,7 @@ export function EWasteTracker() {
         </div>
       </section>
 
-      <div className="tracker-page-hero">
+      <section id="tracker-overview" className="tracker-page-hero">
         <div className="tracker-hero-copy">
           <p className="eyebrow">Track your e-waste</p>
           <h2>Your e-waste is on its way to a cleaner tomorrow.</h2>
@@ -101,9 +101,9 @@ export function EWasteTracker() {
             </span>
           </div>
         </article>
-      </div>
+      </section>
 
-      <section className="tracker-journey" aria-labelledby="tracker-journey-title">
+      <section id="tracker-journey" className="tracker-journey" aria-labelledby="tracker-journey-title">
         <div className="tracker-section-heading">
           <p className="eyebrow">Current journey</p>
           <h3 id="tracker-journey-title">Five checkpoints from pickup to disposal</h3>
@@ -124,7 +124,7 @@ export function EWasteTracker() {
         </ol>
       </section>
 
-      <article className="processing-summary">
+      <article id="facility-status" className="processing-summary">
         <div className="summary-icon">
           <Settings size={37} aria-hidden="true" />
         </div>
@@ -141,7 +141,7 @@ export function EWasteTracker() {
         </div>
       </article>
 
-      <div className="report-action">
+      <div id="recycling-report" className="report-action">
         <button type="button" className="button primary report-button" data-report-download>
           <FileText size={22} aria-hidden="true" />
           Download Recycling Report

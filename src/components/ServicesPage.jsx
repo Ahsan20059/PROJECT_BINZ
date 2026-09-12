@@ -41,7 +41,7 @@ export default function ServicesPage() {
 
   return (
     <main className="services-page">
-      <a className="auth-back-link" href="#home">
+      <a className="auth-back-link" href="#tracker-overview">
         <ArrowLeft size={16} /> Back to BinZ
       </a>
       <section className="services-hero" aria-labelledby="services-title">

@@ -8,21 +8,6 @@ import ServicesPage from './components/ServicesPage';
 import CertificationsPage from './components/CertificationsPage';
 import DonatePage from './components/DonatePage';
 import EWasteTrackerPage from './components/EWasteTrackerPage';
-import HeroSection from './components/HeroSection';
-import TrustRow from './components/TrustRow';
-import StatsBand from './components/StatsBand';
-import ScrapSection from './components/ScrapSection';
-import EarnSection from './components/EarnSection';
-import TrackerSection from './components/TrackerSection';
-import LeaderboardSection from './components/LeaderboardSection';
-import ServiceSection from './components/ServiceSection';
-import AboutBand from './components/AboutBand';
-import Footer from './components/Footer';
-import ChatFab from './components/ChatFab';
-import ChatDrawer from './components/ChatDrawer';
-import AuthDrawer from './components/AuthDrawer';
-import TicketDrawer from './components/TicketDrawer';
-import Scrim from './components/Scrim';
 
 const standalonePages = new Set([
   '#signin',
@@ -35,14 +20,11 @@ const standalonePages = new Set([
 ]);
 
 const mainPageSections = new Set([
-  '#home',
-  '#scrap',
-  '#earn',
-  '#tracker',
-  '#leaderboard',
-  '#service',
-  '#about',
-  '#contact',
+  '#how-it-works',
+  '#tracker-overview',
+  '#tracker-journey',
+  '#facility-status',
+  '#recycling-report',
 ]);
 
 function App() {
@@ -53,7 +35,7 @@ function App() {
   const [openDrawer, setOpenDrawer] = useState(null); // 'chatDrawer' | 'authPanel' | 'ticketPanel' | null
   const [pickupStatus, setPickupStatus] = useState({ msg: '', error: false });
   const [ticketTypePreset, setTicketTypePreset] = useState('');
-  const [currentPage, setCurrentPage] = useState(() => window.location.hash);
+  const [currentPage, setCurrentPage] = useState(() => window.location.hash || '#ewaste-tracker');
 
   const refreshCoins = useCallback(async () => {
     const email = localStorage.getItem('email');
@@ -116,7 +98,7 @@ function App() {
 
   useEffect(() => {
     requestAnimationFrame(() => {
-      if (standalonePages.has(currentPage) || currentPage === '#home' || !currentPage) {
+      if (standalonePages.has(currentPage) || currentPage === '#home' || currentPage === '#ewaste-tracker' || !currentPage) {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
         return;
       }
@@ -175,7 +157,7 @@ function App() {
     localStorage.setItem('state', account.state || '');
     updateCoins(account.coins, { persist: false });
     refreshCoins();
-    window.location.hash = '#home';
+    window.location.hash = '#tracker-overview';
   }
 
   function handleSignOut() {
@@ -199,7 +181,7 @@ function App() {
   }
 
   function handleSellNormal(itemName) {
-    window.location.hash = '#home';
+    window.location.hash = '#tracker-overview';
     document.getElementById('phoneInput')?.focus();
     setPickupStatus({ msg: `${itemName} selected. Add your phone number to book pickup.`, error: false });
   }
@@ -247,79 +229,12 @@ function App() {
     return renderStandalonePage(<DonatePage />);
   }
 
-  if (currentPage === '#ewaste-tracker') {
+  if (!currentPage || currentPage === '#home' || currentPage === '#ewaste-tracker' || currentPage === '#tracker-overview') {
     return renderStandalonePage(<EWasteTrackerPage />);
   }
 
-  return (
-    <>
-      <TopStrip />
-      <Header
-        coins={coins}
-        onOpenAccount={handleOpenSignIn}
-        onSignOut={handleSignOut}
-        isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
-      />
-      <main>
-        <HeroSection
-          coins={coins}
-          entries={entries}
-          tickets={tickets}
-          pickupStatus={pickupStatus}
-          setPickupStatus={setPickupStatus}
-          updateCoins={updateCoins}
-        />
-        <TrustRow />
-        <StatsBand entries={entries} tickets={tickets} />
-        <ScrapSection
-          onSellEwaste={handleSellEwaste}
-          onSellNormal={handleSellNormal}
-        />
-        <EarnSection coins={coins} updateCoins={updateCoins} />
-        <TrackerSection
-          entries={entries}
-          setEntries={setEntries}
-          tickets={tickets}
-          updateCoins={updateCoins}
-          coins={coins}
-        />
-        <LeaderboardSection coins={coins} firstName={firstName} />
-        <ServiceSection
-          onOpenTicket={() => handleOpenDrawer('ticketPanel')}
-          onOpenAccount={() => handleOpenDrawer('authPanel')}
-          onOpenChat={() => handleOpenDrawer('chatDrawer')}
-        />
-        <AboutBand />
-      </main>
-      <Footer />
+  return renderStandalonePage(<EWasteTrackerPage />);
 
-      <ChatFab onOpen={() => handleOpenDrawer('chatDrawer')} />
-
-      <ChatDrawer
-        isOpen={openDrawer === 'chatDrawer'}
-        onClose={handleCloseDrawers}
-      />
-      <AuthDrawer
-        isOpen={openDrawer === 'authPanel'}
-        onClose={handleCloseDrawers}
-        coins={coins}
-        updateCoins={updateCoins}
-        setFirstName={setFirstName}
-      />
-      <TicketDrawer
-        isOpen={openDrawer === 'ticketPanel'}
-        onClose={handleCloseDrawers}
-        ticketTypePreset={ticketTypePreset}
-        tickets={tickets}
-        setTickets={setTickets}
-        updateCoins={updateCoins}
-        coins={coins}
-        setEntries={setEntries}
-        entries={entries}
-      />
-      <Scrim visible={openDrawer !== null} onClick={handleCloseDrawers} />
-    </>
-  );
 }
 
 export default App;
