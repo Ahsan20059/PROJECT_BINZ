@@ -32,7 +32,7 @@ export default function SignUpPage({ onAuthenticated }) {
 
   return (
     <main className="auth-page">
-      <a className="auth-back-link" href="#tracker-overview">
+      <a className="auth-back-link" href="#home">
         <ArrowLeft size={16} /> Back to BinZ
       </a>
       <section className="auth-card" aria-labelledby="sign-up-title">

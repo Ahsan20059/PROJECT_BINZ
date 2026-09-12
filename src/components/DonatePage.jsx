@@ -13,7 +13,7 @@ export default function DonatePage() {
 
   return (
     <main className="donate-page">
-      <a className="auth-back-link" href="#tracker-overview"><ArrowLeft size={16} /> Back to BinZ</a>
+      <a className="auth-back-link" href="#home"><ArrowLeft size={16} /> Back to BinZ</a>
       <section className="donate-hero" aria-labelledby="donate-title">
         <div className="donate-intro">
           <p className="eyebrow">Give more. Waste less.</p>
