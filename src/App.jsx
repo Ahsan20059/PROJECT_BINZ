@@ -208,6 +208,38 @@ function App() {
     window.location.hash = '#signin';
   }
 
+  function renderDrawers() {
+    return (
+      <>
+        <ChatFab onOpen={() => handleOpenDrawer('chatDrawer')} />
+
+        <ChatDrawer
+          isOpen={openDrawer === 'chatDrawer'}
+          onClose={handleCloseDrawers}
+        />
+        <AuthDrawer
+          isOpen={openDrawer === 'authPanel'}
+          onClose={handleCloseDrawers}
+          coins={coins}
+          updateCoins={updateCoins}
+          setFirstName={setFirstName}
+        />
+        <TicketDrawer
+          isOpen={openDrawer === 'ticketPanel'}
+          onClose={handleCloseDrawers}
+          ticketTypePreset={ticketTypePreset}
+          tickets={tickets}
+          setTickets={setTickets}
+          updateCoins={updateCoins}
+          coins={coins}
+          setEntries={setEntries}
+          entries={entries}
+        />
+        <Scrim visible={openDrawer !== null} onClick={handleCloseDrawers} />
+      </>
+    );
+  }
+
   function renderStandalonePage(page) {
     return (
       <>
@@ -215,10 +247,13 @@ function App() {
         <Header
           coins={coins}
           onOpenAccount={handleOpenSignIn}
+          onOpenTicket={() => handleOpenDrawer('ticketPanel')}
+          onOpenChat={() => handleOpenDrawer('chatDrawer')}
           onSignOut={handleSignOut}
           isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
         />
         {page}
+        {renderDrawers()}
       </>
     );
   }
@@ -257,6 +292,8 @@ function App() {
       <Header
         coins={coins}
         onOpenAccount={handleOpenSignIn}
+        onOpenTicket={() => handleOpenDrawer('ticketPanel')}
+        onOpenChat={() => handleOpenDrawer('chatDrawer')}
         onSignOut={handleSignOut}
         isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
       />
@@ -292,32 +329,7 @@ function App() {
         <AboutBand />
       </main>
       <Footer />
-
-      <ChatFab onOpen={() => handleOpenDrawer('chatDrawer')} />
-
-      <ChatDrawer
-        isOpen={openDrawer === 'chatDrawer'}
-        onClose={handleCloseDrawers}
-      />
-      <AuthDrawer
-        isOpen={openDrawer === 'authPanel'}
-        onClose={handleCloseDrawers}
-        coins={coins}
-        updateCoins={updateCoins}
-        setFirstName={setFirstName}
-      />
-      <TicketDrawer
-        isOpen={openDrawer === 'ticketPanel'}
-        onClose={handleCloseDrawers}
-        ticketTypePreset={ticketTypePreset}
-        tickets={tickets}
-        setTickets={setTickets}
-        updateCoins={updateCoins}
-        coins={coins}
-        setEntries={setEntries}
-        entries={entries}
-      />
-      <Scrim visible={openDrawer !== null} onClick={handleCloseDrawers} />
+      {renderDrawers()}
     </>
   );
 }

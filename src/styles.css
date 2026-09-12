@@ -166,6 +166,7 @@ textarea {
   transform: scaleX(1);
 }
 
+.nav-menu,
 .impact-menu {
   position: relative;
 }
@@ -180,8 +181,8 @@ textarea {
   transition: transform 0.2s ease;
 }
 
-.impact-menu:hover .impact-link svg,
-.impact-menu:focus-within .impact-link svg {
+.impact-menu.open .impact-link svg,
+.service-menu.open .impact-link svg {
   transform: rotate(180deg);
 }
 
@@ -205,25 +206,59 @@ textarea {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.impact-menu:hover .impact-dropdown,
-.impact-menu:focus-within .impact-dropdown {
+.impact-menu.open .impact-dropdown,
+.service-menu.open .service-dropdown {
   opacity: 1;
   pointer-events: auto;
   transform: translate(-50%, 0);
 }
 
-.impact-dropdown a {
+.impact-dropdown a,
+.impact-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 0;
   padding: 10px 12px;
   border-radius: 9px;
   color: var(--pine);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
   font-size: 12px;
   font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
   text-transform: none;
   white-space: nowrap;
 }
 
+.impact-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.impact-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.2;
+}
+
+.impact-item-title {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+}
+
 .impact-dropdown a:hover,
-.impact-dropdown a:focus-visible {
+.impact-dropdown a:focus-visible,
+.impact-dropdown button:hover,
+.impact-dropdown button:focus-visible {
   background: rgba(234, 244, 230, 0.8);
   outline: none;
 }
@@ -2198,11 +2233,19 @@ textarea:focus {
 }
 
 #chatDrawer {
-  background: rgba(251, 250, 242, 0.9);
+  background: rgba(251, 250, 242, 0.96);
   border-color: rgba(255, 255, 255, 0.92);
   box-shadow: 0 28px 70px rgba(13, 27, 16, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+#ticketPanel {
+  background: rgba(251, 250, 242, 0.98);
+  border-left: 1px solid rgba(255, 255, 255, 0.94);
+  box-shadow: 0 28px 70px rgba(13, 27, 16, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .drawer.open {
@@ -2390,7 +2433,8 @@ textarea:focus {
     font-size: 12px;
   }
 
-  .impact-menu {
+  .impact-menu,
+  .service-menu {
     grid-column: span 1;
   }
 
@@ -2399,8 +2443,8 @@ textarea:focus {
     transform: translate(0, -2px);
   }
 
-  .impact-menu:hover .impact-dropdown,
-  .impact-menu:focus-within .impact-dropdown {
+  .impact-menu.open .impact-dropdown,
+  .service-menu.open .service-dropdown {
     transform: translate(0, 0);
   }
 

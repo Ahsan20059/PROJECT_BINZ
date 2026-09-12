@@ -1,5 +1,5 @@
 **Findings**
-- No P0/P1/P2 issues found for the requested larger tracker-page demo section, demo-first ordering, demo video section, recycling report CTA simplification, tracker-page navbar section routing, tracker heading font match, top-of-page tracker navigation, tracker page redesign, duplicate-logo removal, Service Hub button alignment, and tracker page navigation.
+- No P0/P1/P2 issues found for the requested ticket drawer opacity increase, Service navbar dropdown, larger tracker-page demo section, demo-first ordering, demo video section, recycling report CTA simplification, tracker-page navbar section routing, tracker heading font match, top-of-page tracker navigation, tracker page redesign, duplicate-logo removal, Service Hub button alignment, and tracker page navigation.
 
 **Source Visual Truth**
 - Service Hub reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-9aa4753e-5f9b-4312-b2c1-ae79b727cb5d.png`
@@ -11,6 +11,14 @@
 - Recycling report CTA simplification reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-d6301494-b661-441d-ae21-db3154de7e2d.png`
 - Tracker demo video placement correction: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-6e94ebb8-8406-401a-a9ec-f2b7bdab2d1e.png`
 - Tracker autoplay video source: `C:\Users\priya\OneDrive\Desktop\BinZ Promotional Video.mp4`
+- Ticket drawer opacity reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-00bc2903-cf9a-445e-a2c9-737c20957c63.png`
+- Service dropdown reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-9c7f69a6-b3c1-4c9d-876a-ae6df289fad4.png`
+- Service dropdown cleanup reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-c015ccfb-cf1e-4465-999b-6b6dbf7d1ec9.png`
+- Impact dropdown alignment reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-0929f388-2e8c-4169-a5ee-2edcb416c9fc.png`
+- Service dropdown interaction reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-7d5aac64-e261-43bd-b204-3d05c3663ceb.png`
+- Service dropdown ticket drawer target: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-4e17aa11-c71a-4545-8781-60ede0270ca9.png`
+- Service dropdown FAQ drawer target: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-f9a67dff-647f-478f-9394-324bc99b2006.png`
+- Dropdown overlap correction reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-928564e0-a345-4504-83c8-f494bf630a65.png`
 - Page style examples: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-bb8fd4fd-26a7-4479-8f0a-43c55c7779d7.png`, `C:\Users\priya\AppData\Local\Temp\codex-clipboard-2b3144e5-0942-4847-a6f9-1e2b23ab4b22.png`
 
 **Implementation Evidence**
@@ -23,12 +31,20 @@
 - Fonts and typography: Uses the existing BinZ Inter/Instrument Serif stack. The new tracker uses strong headline hierarchy, compact status labels, and no text overlap in the captured desktop state.
 - Tracker typography update: The tracker hero heading now follows the same treatment as the learn-page heading reference: Inter, `500` weight, `clamp(38px, 4.7vw, 66px)`, `1` line-height, and `-4px` desktop letter spacing. The lead remains `17px`, and the journey heading remains smaller at `clamp(26px, 2.9vw, 36px)`.
 - Spacing and layout rhythm: The new tracker follows the site page rhythm from the donate/learn examples: open hero area, right-side device status card, full-width journey section, processing summary, and report CTA.
-- Colors and visual tokens: Uses the site tokens for pine, moss, mint, cream, teal and muted text. FAQ drawer opacity is increased to `rgba(251, 250, 242, 0.9)`.
+- Colors and visual tokens: Uses the site tokens for pine, moss, mint, cream, teal and muted text. FAQ drawer opacity is increased to `rgba(251, 250, 242, 0.96)`, and the ticket drawer uses `rgba(251, 250, 242, 0.98)`.
 - Image quality and asset fidelity: Existing BinZ logo asset remains only in the header; the duplicate tracker-body logo was removed. The laptop is represented with the existing Lucide visual language to keep the integration frontend-only and consistent with the current app.
 - Copy/content: The new copy mirrors the reference's e-waste tracking intent and keeps the demo status data local to the frontend.
 
 **Interactions Tested**
 - `Track your E-waste` card is visible in the Service Hub.
+- Service navbar dropdown check: clicking `SERVICE` opens a dropdown with `E-waste ticket`, `Track e-waste`, and `Help and FAQ`; `Service hub` has been removed.
+- Dropdown alignment check: both `IMPACT` and `SERVICE` dropdown rows now use flex alignment with a fixed-width icon column, an 8px gap, and cleaned label text so icons line up with the text.
+- Dropdown overlap check: opening `IMPACT` sets the Impact dropdown opacity to `1` and Service dropdown opacity to `0`; opening `SERVICE` sets the Impact dropdown opacity to `0` and Service dropdown opacity to `1`.
+- Hover dropdown check: hovering `IMPACT` opens only the Impact dropdown; hovering `SERVICE` opens only the Service dropdown and closes Impact.
+- Service dropdown action check: clicking `E-waste ticket` opens `#ticketPanel` with the `Raise a ticket` form.
+- Service dropdown action check: clicking `Help and FAQ` opens `#chatDrawer` with the `How can BinZ help?` options.
+- Standalone page support check: the shared header now receives the same drawer-opening callbacks on standalone routes as it does on the main page.
+- Ticket drawer opacity check: opening `Open ticket` renders `#ticketPanel.open` with background `rgba(251, 250, 242, 0.98)`, reducing background text visibility from the page underneath.
 - Button top positions in the Service Hub were aligned at the same y-coordinate in the browser: `Open ticket`, `Open account`, `Open FAQs`, and `Open tracker`.
 - The `Open tracker` CTA navigates to `http://localhost:5503/index.html#ewaste-tracker`.
 - The new page shows `Your e-waste is on its way to a cleaner tomorrow.`
@@ -56,6 +72,14 @@
 
 **Implementation Checklist**
 - Added a fourth Service Hub card named `Track your E-waste`.
+- Added a Service navbar dropdown that visually matches the Impact dropdown.
+- Removed `Service hub` from the Service navbar dropdown.
+- Aligned the Impact and Service dropdown icons with their text labels.
+- Added hover/focus-controlled dropdown opening for Impact and Service without allowing overlap.
+- Wired the Service dropdown `E-waste ticket` item to the ticket drawer.
+- Wired the Service dropdown `Help and FAQ` item to the FAQ drawer.
+- Added the shared drawer layer to standalone pages so dropdown drawer actions work away from the homepage too.
+- Increased the FAQ and ticket drawer opacity so underlying page text is no longer visible through the panel.
 - Moved the e-waste tracker design into a reusable `EWasteTracker` component.
 - Routed `Open tracker` to the standalone `#ewaste-tracker` page.
 - Aligned all four Service Hub CTA buttons in one row.
