@@ -59,7 +59,14 @@ BinZ-Project/
 |   |-- package-lock.json     Backend dependency lockfile
 |   |-- server.js             Express API and MongoDB models
 |   `-- uploads/              Uploaded video files
-|-- CSS/                      Additional copies of page stylesheets
+|-- public/assets/            Runtime assets served by Vite
+|-- assets/                   Source copies of images and video assets
+|-- src/                      Current React/Vite frontend source
+|   |-- App.jsx               Main app and hash routing
+|   |-- main.jsx              React entry point
+|   |-- styles.css            Main site styles
+|   `-- components/           React page and section components
+|-- CSS/                      Legacy copies of page stylesheets
 |-- HTML/
 |   |-- home-page.html        Main dashboard and landing page
 |   |-- Scrap.html            Scrap and e-waste price catalog
@@ -73,11 +80,12 @@ BinZ-Project/
 |   |-- *.css                 Page-specific styles
 |   `-- Images/               Logos, product images, badges, and artwork
 |-- .gitignore                Ignores environments, secrets, IDE files, and model weights
-|-- package-lock.json         Empty root lockfile; dependencies belong to backend/
+|-- package.json              Frontend scripts and dependencies
+|-- package-lock.json         Frontend dependency lockfile
 `-- README.md                This project guide
 ```
 
-The stylesheets in `CSS/` duplicate the stylesheets in `HTML/`. The pages currently load the files from `HTML/`, so changes to the files in `CSS/` are not automatically reflected in the running pages.
+The current frontend is the React/Vite app in `src/`. The `HTML/` and `CSS/` folders are legacy files and are not the main app opened by `npm run dev`.
 
 ## Prerequisites
 
@@ -149,13 +157,7 @@ npm run dev
 
 The frontend makes requests to `http://localhost:5050` by default unless `VITE_API_URL` is configured, so the backend must be running separately for backend-powered flows.
 
-Example static-server option:
-
-```powershell
-npx serve HTML
-```
-
-Then open the URL printed by `serve` and navigate to `sign.html` or `regestrion.html`.
+Do not use `npx serve HTML` for the current frontend. Use `npm run dev` from the repository root.
 
 ## Frontend Pages
 
