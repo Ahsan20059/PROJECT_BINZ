@@ -82,6 +82,156 @@ const leaderboardNames = [
     "Aarav Mehta", "Diya Kapoor", "Kabir Shah", "Meera Nair",
     "Rohan Verma", "Ishita Rao", "Vivaan Singh", "Anaya Joshi",
 ];
+const EWASTE_TRACKING_STATUSES = [
+    "Ticket Created",
+    "Pickup Scheduled",
+    "Picked Up",
+    "At Facility",
+    "Processing",
+    "Material Recovery",
+    "Final Disposal",
+    "Recycled",
+    "Cancelled",
+];
+
+const DEFAULT_TRACKING_STEPS = [
+    { status: "Picked Up", label: "Picked Up", fallbackTime: "Pending" },
+    { status: "At Facility", label: "At Facility", fallbackTime: "Pending" },
+    { status: "Processing", label: "Processing", fallbackTime: "Pending" },
+    { status: "Material Recovery", label: "Material Recovery", fallbackTime: "Pending" },
+    { status: "Final Disposal", label: "Final Disposal", fallbackTime: "Pending" },
+];
+
+function normalizeTicketStatus(status) {
+    if (typeof status !== "string") return null;
+    const cleaned = sanitizeInput(status);
+    return EWASTE_TRACKING_STATUSES.find((item) => item.toLowerCase() === cleaned.toLowerCase()) || null;
+}
+
+function buildTrackingSteps(currentStatus, history = []) {
+    const activeIndex = DEFAULT_TRACKING_STEPS.findIndex((step) => step.status === currentStatus);
+    const historyByStatus = new Map(
+        history
+            .filter((item) => item.status)
+            .map((item) => [item.status, item]),
+    );
+
+    return DEFAULT_TRACKING_STEPS.map((step, index) => {
+        const historyItem = historyByStatus.get(step.status);
+        let state = "pending";
+
+        if (currentStatus === "Cancelled") state = historyItem ? "done" : "cancelled";
+        else if (currentStatus === "Ticket Created" || currentStatus === "Pickup Scheduled") state = "pending";
+        else if (index < activeIndex) state = "done";
+        else if (index === activeIndex) state = currentStatus === "Final Disposal" ? "done" : "active";
+
+        return {
+            status: step.status,
+            label: step.label,
+            state,
+            time: historyItem?.changedAt || step.fallbackTime,
+            note: historyItem?.note || "",
+            facility: historyItem?.facility || "",
+        };
+    });
+}
+
+function buildReportDownloadUrl(ticket) {
+    return `/track-ewaste/${encodeURIComponent(ticket.ticketID)}/report`;
+}
+
+function buildTrackingReport(ticket) {
+    const productName = ticket.productName || ticket.eWasteType;
+    const productCategory = ticket.productCategory || ticket.eWasteType;
+    const lines = [
+        "BinZ E-Waste Recycling Report",
+        "",
+        `Tracking ID: ${ticket.ticketID}`,
+        `Product ID: ${ticket.productId || ticket.ticketID}`,
+        `Product Name: ${productName}`,
+        `Category: ${productCategory}`,
+        `Current Status: ${ticket.status}`,
+        `Status Note: ${ticket.statusNote || ""}`,
+        `Facility: ${ticket.facility || ""}`,
+        `Created At: ${ticket.createdAt || ticket.date || ""}`,
+        `Updated At: ${ticket.updatedAt || ""}`,
+        "",
+        "Checkpoint History:",
+    ];
+
+    (ticket.statusHistory || []).forEach((item) => {
+        lines.push(`- ${item.status}: ${item.note || "No note"} (${item.changedAt || "time pending"})`);
+    });
+
+    return `${lines.join("\n")}\n`;
+}
+
+function buildTrackingResponse(ticket, options = {}) {
+    const productName = ticket.productName || ticket.eWasteType;
+    const productCategory = ticket.productCategory || ticket.eWasteType;
+    const response = {
+        ticketID: ticket.ticketID,
+        trackingID: ticket.ticketID,
+        product: {
+            id: ticket.productId || ticket.ticketID,
+            name: productName,
+            category: productCategory,
+            type: ticket.eWasteType,
+            imageUrl: ticket.productImageUrl,
+            imageAlt: `${productName} product image`,
+        },
+        eWasteType: ticket.eWasteType,
+        productId: ticket.productId || ticket.ticketID,
+        productName,
+        productCategory,
+        productImageUrl: ticket.productImageUrl,
+        description: ticket.description,
+        status: ticket.status,
+        statusNote: ticket.statusNote,
+        facility: ticket.facility,
+        scheduledPickupAt: ticket.scheduledPickupAt,
+        estimatedCompletionAt: ticket.estimatedCompletionAt,
+        recyclingReportUrl: ticket.recyclingReportUrl,
+        reportDownloadUrl: buildReportDownloadUrl(ticket),
+        report: {
+            available: true,
+            downloadUrl: buildReportDownloadUrl(ticket),
+            externalUrl: ticket.recyclingReportUrl || null,
+        },
+        createdAt: ticket.createdAt,
+        updatedAt: ticket.updatedAt,
+        trackingSteps: buildTrackingSteps(ticket.status, ticket.statusHistory || []),
+        history: ticket.statusHistory,
+    };
+
+    if (options.includeCustomer) {
+        response.customer = {
+            name: ticket.name,
+            email: ticket.email,
+            pickupAddress: ticket.pickupAddress,
+        };
+        response.name = ticket.name;
+        response.email = ticket.email;
+        response.pickupAddress = ticket.pickupAddress;
+    }
+
+    return response;
+}
+
+function requireAdmin(req, res, next) {
+    const expectedKey = process.env.ADMIN_API_KEY;
+    const providedKey = req.header("x-admin-key");
+
+    if (!expectedKey) {
+        return res.status(500).json({ message: "Admin API key is not configured on the server." });
+    }
+
+    if (!providedKey || providedKey !== expectedKey) {
+        return res.status(401).json({ message: "Unauthorized admin request." });
+    }
+
+    next();
+}
 
 app.post("/register", registrationLimiter, async (req, res) => {
     try {
@@ -333,30 +483,99 @@ app.post("/uploadVideo", upload.single("video"), async (req, res) => {
     }
 });
 
-// ⬛ TICKET SYSTEM
+// E-waste ticket and tracking system
 const ticketSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    eWasteType: String,
+    name: { type: String, required: true },
+    email: { type: String, required: true, lowercase: true },
+    eWasteType: { type: String, required: true },
+    productName: String,
+    productCategory: String,
+    productId: { type: String, unique: true, sparse: true, index: true },
+    productImageUrl: String,
     description: String,
-    ticketID: String,
-    date: { type: Date, default: Date.now }
-});
+    pickupAddress: String,
+    ticketID: { type: String, required: true, unique: true, index: true },
+    status: { type: String, enum: EWASTE_TRACKING_STATUSES, default: "Ticket Created" },
+    statusNote: { type: String, default: "Your e-waste ticket has been created." },
+    facility: { type: String, default: "Greater Noida, UP" },
+    scheduledPickupAt: Date,
+    estimatedCompletionAt: Date,
+    recyclingReportUrl: String,
+    statusHistory: [
+        {
+            status: { type: String, enum: EWASTE_TRACKING_STATUSES },
+            note: String,
+            facility: String,
+            changedBy: String,
+            changedAt: { type: Date, default: Date.now },
+        },
+    ],
+}, { timestamps: true });
 
 const Ticket = mongoose.model("Ticket", ticketSchema);
 
+async function createUniqueTicketID() {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+        const ticketID = "EW-" + Math.floor(100000 + Math.random() * 900000);
+        const existingTicket = await Ticket.exists({ ticketID });
+        if (!existingTicket) return ticketID;
+    }
+
+    return `EW-${Date.now()}`;
+}
+
+async function createUniqueProductId() {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+        const productId = "BINZ-" + Math.floor(10000 + Math.random() * 90000);
+        const existingProduct = await Ticket.exists({ productId });
+        if (!existingProduct) return productId;
+    }
+
+    return `BINZ-${Date.now()}`;
+}
+
 app.post("/submit-ticket", async (req, res) => {
     try {
-        const { name, email, eWasteType, description } = req.body;
+        const { name, email, eWasteType, productName, productCategory, productImageUrl, description, pickupAddress, scheduledPickupAt } = req.body;
         if (!name || !email || !eWasteType) {
             return res.status(400).json({ message: "Name, email and e-waste type are required." });
         }
 
-        const ticketID = "EW-" + Math.floor(100000 + Math.random() * 900000);
-        const newTicket = new Ticket({ name, email, eWasteType, description, ticketID });
+        const sanitizedEmail = sanitizeInput(email).toLowerCase();
+        if (!validateEmail(sanitizedEmail)) {
+            return res.status(400).json({ message: "Please enter a valid email address." });
+        }
+
+        const ticketID = await createUniqueTicketID();
+        const productId = await createUniqueProductId();
+        const sanitizedProductName = sanitizeInput(productName || eWasteType);
+        const sanitizedProductCategory = sanitizeInput(productCategory || eWasteType);
+        const initialStatus = "Ticket Created";
+        const initialNote = "Your e-waste ticket has been created.";
+        const newTicket = new Ticket({
+            name: sanitizeInput(name),
+            email: sanitizedEmail,
+            eWasteType: sanitizeInput(eWasteType),
+            productName: sanitizedProductName,
+            productCategory: sanitizedProductCategory,
+            productId,
+            productImageUrl: sanitizeInput(productImageUrl || ""),
+            description: sanitizeInput(description || ""),
+            pickupAddress: sanitizeInput(pickupAddress || ""),
+            scheduledPickupAt: scheduledPickupAt ? new Date(scheduledPickupAt) : undefined,
+            ticketID,
+            status: initialStatus,
+            statusNote: initialNote,
+            statusHistory: [
+                {
+                    status: initialStatus,
+                    note: initialNote,
+                    changedBy: "system",
+                },
+            ],
+        });
         await newTicket.save();
 
-        // Email confirmation is best-effort — ticket creation still succeeds if this fails.
         try {
             const transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -368,9 +587,9 @@ app.post("/submit-ticket", async (req, res) => {
 
             const mailOptions = {
                 from: process.env.EMAIL_USER,
-                to: email,
+                to: sanitizedEmail,
                 subject: "E-Waste Ticket Confirmation",
-                text: `Hello ${name},\n\nYour ticket has been created successfully.\nTicket ID: ${ticketID}\nWe will contact you soon!\n\nThank you!`
+                text: `Hello ${newTicket.name}\n\nYour ticket has been created successfully.\nTicket ID: ${ticketID}\nTrack it at: /track-ewaste/${ticketID}\n\nWe will contact you soon!\n\nThank you!`
             };
 
             await transporter.sendMail(mailOptions);
@@ -378,11 +597,125 @@ app.post("/submit-ticket", async (req, res) => {
             console.error("⚠️ Ticket email failed (ticket still created):", mailError.message);
         }
 
-        res.status(200).json({ message: "Ticket created successfully!", ticketID });
+        res.status(201).json({
+            message: "Ticket created successfully!",
+            ticketID,
+            trackingID: ticketID,
+            tracking: buildTrackingResponse(newTicket, { includeCustomer: true }),
+        });
 
     } catch (error) {
         console.error("Error submitting ticket:", error);
         res.status(500).json({ message: "Error submitting ticket" });
+    }
+});
+
+app.get("/track-ewaste/:ticketID", async (req, res) => {
+    try {
+        const ticket = await Ticket.findOne({ ticketID: sanitizeInput(req.params.ticketID) });
+        if (!ticket) {
+            return res.status(404).json({ message: "Tracking ID not found." });
+        }
+
+        res.status(200).json({ tracking: buildTrackingResponse(ticket) });
+    } catch (error) {
+        console.error("Error fetching e-waste tracking:", error);
+        res.status(500).json({ message: "Error fetching e-waste tracking" });
+    }
+});
+
+app.get("/track-ewaste/:ticketID/report", async (req, res) => {
+    try {
+        const ticket = await Ticket.findOne({ ticketID: sanitizeInput(req.params.ticketID) });
+        if (!ticket) {
+            return res.status(404).json({ message: "Tracking ID not found." });
+        }
+
+        res.setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.setHeader("Content-Disposition", `attachment; filename="binz-ewaste-report-${ticket.ticketID}.txt"`);
+        res.status(200).send(buildTrackingReport(ticket));
+    } catch (error) {
+        console.error("Error downloading e-waste report:", error);
+        res.status(500).json({ message: "Error downloading e-waste report" });
+    }
+});
+app.get("/admin/ewaste-tickets", requireAdmin, async (req, res) => {
+    try {
+        const { status, email } = req.query;
+        const filter = {};
+
+        const normalizedStatus = status ? normalizeTicketStatus(status) : null;
+        if (status && !normalizedStatus) {
+            return res.status(400).json({ message: "Invalid status value." });
+        }
+        if (normalizedStatus) filter.status = normalizedStatus;
+        if (email) filter.email = sanitizeInput(email).toLowerCase();
+
+        const tickets = await Ticket.find(filter).sort({ createdAt: -1 }).limit(100);
+        res.status(200).json({ tickets: tickets.map((ticket) => buildTrackingResponse(ticket, { includeCustomer: true })) });
+    } catch (error) {
+        console.error("Error fetching admin e-waste tickets:", error);
+        res.status(500).json({ message: "Error fetching e-waste tickets" });
+    }
+});
+
+app.get("/admin/ewaste-tickets/:ticketID", requireAdmin, async (req, res) => {
+    try {
+        const ticket = await Ticket.findOne({ ticketID: sanitizeInput(req.params.ticketID) });
+        if (!ticket) {
+            return res.status(404).json({ message: "Ticket not found." });
+        }
+
+        res.status(200).json({ ticket: buildTrackingResponse(ticket, { includeCustomer: true }) });
+    } catch (error) {
+        console.error("Error fetching admin e-waste ticket:", error);
+        res.status(500).json({ message: "Error fetching e-waste ticket" });
+    }
+});
+
+app.patch("/admin/ewaste-tickets/:ticketID/status", requireAdmin, async (req, res) => {
+    try {
+        const status = normalizeTicketStatus(req.body.status);
+        if (!status) {
+            return res.status(400).json({
+                message: "Invalid status value.",
+                allowedStatuses: EWASTE_TRACKING_STATUSES,
+            });
+        }
+
+        const ticket = await Ticket.findOne({ ticketID: sanitizeInput(req.params.ticketID) });
+        if (!ticket) {
+            return res.status(404).json({ message: "Ticket not found." });
+        }
+
+        const statusNote = sanitizeInput(req.body.statusNote || req.body.note || "");
+        const facility = sanitizeInput(req.body.facility || ticket.facility || "");
+        const changedBy = sanitizeInput(req.body.changedBy || "admin");
+
+        ticket.status = status;
+        ticket.statusNote = statusNote || ticket.statusNote;
+        ticket.facility = facility;
+        if (req.body.scheduledPickupAt) ticket.scheduledPickupAt = new Date(req.body.scheduledPickupAt);
+        if (req.body.estimatedCompletionAt) ticket.estimatedCompletionAt = new Date(req.body.estimatedCompletionAt);
+        if (req.body.recyclingReportUrl) ticket.recyclingReportUrl = sanitizeInput(req.body.recyclingReportUrl);
+        if (req.body.productName) ticket.productName = sanitizeInput(req.body.productName);
+        if (req.body.productCategory) ticket.productCategory = sanitizeInput(req.body.productCategory);
+        if (req.body.productImageUrl) ticket.productImageUrl = sanitizeInput(req.body.productImageUrl);
+        ticket.statusHistory.push({
+            status,
+            note: ticket.statusNote,
+            facility: ticket.facility,
+            changedBy,
+        });
+
+        await ticket.save();
+        res.status(200).json({
+            message: "Ticket status updated successfully.",
+            ticket: buildTrackingResponse(ticket, { includeCustomer: true }),
+        });
+    } catch (error) {
+        console.error("Error updating e-waste ticket status:", error);
+        res.status(500).json({ message: "Error updating e-waste ticket status" });
     }
 });
 

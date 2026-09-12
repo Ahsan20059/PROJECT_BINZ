@@ -34,4 +34,114 @@ Server runs on `http://localhost:5000` by default (`PORT` in `.env` to change it
 | GET | `/getCoins/:email` | Current coin balance |
 | POST | `/rewardCoins` | Add (or subtract) coins for a user |
 | POST | `/uploadVideo` | Upload a cleanup video for garbage detection |
-| POST | `/submit-ticket` | Raise an e-waste pickup ticket |
+| POST | `/submit-ticket` | Raise an e-waste pickup ticket and return a tracking ID |
+| GET | `/track-ewaste/:ticketID` | Public tracking view for a user's e-waste ticket |
+| GET | `/track-ewaste/:ticketID/report` | Download the recycling report for a tracking ID |
+| GET | `/admin/ewaste-tickets` | Admin list of e-waste tickets; requires x-admin-key |
+| GET | `/admin/ewaste-tickets/:ticketID` | Admin ticket detail; requires x-admin-key |
+| PATCH | `/admin/ewaste-tickets/:ticketID/status` | Admin status/product/report update; requires x-admin-key |
+
+## E-waste tracking API
+
+When a user submits an e-waste ticket, the backend creates a tracking record. The frontend can keep using `POST /submit-ticket`; the response now includes `ticketID`, `trackingID`, product details, status, checkpoints, and a report download URL.
+
+Admin routes require this header:
+
+```http
+x-admin-key: your-admin-key
+```
+
+Set the matching value in `.env`:
+
+```bash
+ADMIN_API_KEY=your-admin-key
+```
+
+Allowed status values:
+
+```text
+Ticket Created
+Pickup Scheduled
+Picked Up
+At Facility
+Processing
+Material Recovery
+Final Disposal
+Recycled
+Cancelled
+```
+
+Create a ticket:
+
+```http
+POST /submit-ticket
+Content-Type: application/json
+
+{
+  "name": "Ahsan",
+  "email": "ahsan@example.com",
+  "eWasteType": "Laptop",
+  "productName": "Dell Inspiron 15",
+  "productCategory": "Laptop (E-waste)",
+  "productImageUrl": "https://example.com/laptop.png",
+  "description": "Old laptop for recycling",
+  "pickupAddress": "Greater Noida"
+}
+```
+
+Track as a user:
+
+```http
+GET /track-ewaste/EW-123456
+```
+
+The public tracking response includes:
+
+```json
+{
+  "trackingID": "EW-123456",
+  "product": {
+    "id": "BINZ-48291",
+    "name": "Dell Inspiron 15",
+    "category": "Laptop (E-waste)",
+    "type": "Laptop",
+    "imageUrl": "https://example.com/laptop.png"
+  },
+  "status": "Processing",
+  "statusNote": "At recycling facility",
+  "trackingSteps": [],
+  "reportDownloadUrl": "/track-ewaste/EW-123456/report"
+}
+```
+
+Download report as a user:
+
+```http
+GET /track-ewaste/EW-123456/report
+```
+
+List tickets as admin:
+
+```http
+GET /admin/ewaste-tickets
+x-admin-key: your-admin-key
+```
+
+Update status as admin:
+
+```http
+PATCH /admin/ewaste-tickets/EW-123456/status
+Content-Type: application/json
+x-admin-key: your-admin-key
+
+{
+  "status": "Processing",
+  "statusNote": "Device is being dismantled and sorted.",
+  "productName": "Dell Inspiron 15",
+  "productCategory": "Laptop (E-waste)",
+  "productImageUrl": "https://example.com/laptop.png",
+  "facility": "Greater Noida, UP",
+  "estimatedCompletionAt": "2026-09-20T10:00:00.000Z",
+  "recyclingReportUrl": "https://example.com/report.pdf"
+}
+```
