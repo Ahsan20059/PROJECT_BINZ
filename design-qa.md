@@ -18,6 +18,7 @@
 - Service dropdown interaction reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-7d5aac64-e261-43bd-b204-3d05c3663ceb.png`
 - Service dropdown ticket drawer target: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-4e17aa11-c71a-4545-8781-60ede0270ca9.png`
 - Service dropdown FAQ drawer target: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-f9a67dff-647f-478f-9394-324bc99b2006.png`
+- Dropdown overlap correction reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-928564e0-a345-4504-83c8-f494bf630a65.png`
 - Page style examples: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-bb8fd4fd-26a7-4479-8f0a-43c55c7779d7.png`, `C:\Users\priya\AppData\Local\Temp\codex-clipboard-2b3144e5-0942-4847-a6f9-1e2b23ab4b22.png`
 
 **Implementation Evidence**
@@ -38,6 +39,7 @@
 - `Track your E-waste` card is visible in the Service Hub.
 - Service navbar dropdown check: clicking `SERVICE` opens a dropdown with `E-waste ticket`, `Track e-waste`, and `Help and FAQ`; `Service hub` has been removed.
 - Dropdown alignment check: both `IMPACT` and `SERVICE` dropdown rows now use flex alignment with a fixed-width icon column, an 8px gap, and cleaned label text so icons line up with the text.
+- Dropdown overlap check: opening `IMPACT` sets the Impact dropdown opacity to `1` and Service dropdown opacity to `0`; opening `SERVICE` sets the Impact dropdown opacity to `0` and Service dropdown opacity to `1`.
 - Service dropdown action check: clicking `E-waste ticket` opens `#ticketPanel` with the `Raise a ticket` form.
 - Service dropdown action check: clicking `Help and FAQ` opens `#chatDrawer` with the `How can BinZ help?` options.
 - Standalone page support check: the shared header now receives the same drawer-opening callbacks on standalone routes as it does on the main page.
@@ -72,6 +74,7 @@
 - Added a Service navbar dropdown that visually matches the Impact dropdown.
 - Removed `Service hub` from the Service navbar dropdown.
 - Aligned the Impact and Service dropdown icons with their text labels.
+- Removed hover-triggered dropdown visibility so adjacent dropdowns cannot remain open and overlap.
 - Wired the Service dropdown `E-waste ticket` item to the ticket drawer.
 - Wired the Service dropdown `Help and FAQ` item to the FAQ drawer.
 - Added the shared drawer layer to standalone pages so dropdown drawer actions work away from the homepage too.

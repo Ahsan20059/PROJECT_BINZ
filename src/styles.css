@@ -181,10 +181,8 @@ textarea {
   transition: transform 0.2s ease;
 }
 
-.impact-menu:hover .impact-link svg,
 .impact-menu:focus-within .impact-link svg,
 .impact-menu.open .impact-link svg,
-.service-menu:hover .impact-link svg,
 .service-menu:focus-within .impact-link svg,
 .service-menu.open .impact-link svg {
   transform: rotate(180deg);
@@ -210,10 +208,8 @@ textarea {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.impact-menu:hover .impact-dropdown,
 .impact-menu:focus-within .impact-dropdown,
 .impact-menu.open .impact-dropdown,
-.service-menu:hover .service-dropdown,
 .service-menu:focus-within .service-dropdown,
 .service-menu.open .service-dropdown {
   opacity: 1;
@@ -2451,10 +2447,8 @@ textarea:focus {
     transform: translate(0, -2px);
   }
 
-  .impact-menu:hover .impact-dropdown,
   .impact-menu:focus-within .impact-dropdown,
   .impact-menu.open .impact-dropdown,
-  .service-menu:hover .service-dropdown,
   .service-menu:focus-within .service-dropdown,
   .service-menu.open .service-dropdown {
     transform: translate(0, 0);
