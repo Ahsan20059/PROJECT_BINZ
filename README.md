@@ -6,9 +6,40 @@ BinZ is a recycling and scrap-collection web project. It combines a static HTML/
 
 This repository is a prototype. Several frontend screens are complete enough to demonstrate the user experience, while some integrations still need wiring or cleanup. The **Known Limitations** section describes behavior that is currently simulated or blocked by missing files.
 
+## Quick Start: Frontend
+
+Use this when cloning the current React frontend repo:
+
+```powershell
+git clone https://github.com/manika-03/BinZ_Frontend.git
+cd BinZ_Frontend
+npm install
+npm run dev
+```
+
+Then open the local URL printed by Vite, usually:
+
+```text
+http://localhost:5173/
+```
+
+The e-waste tracker page is available at:
+
+```text
+http://localhost:5173/#ewaste-tracker
+```
+
+If `npm install` or `npm run dev` fails, first check the Node.js version:
+
+```powershell
+node -v
+```
+
+This frontend uses Vite 8, so use Node.js `20.19+` or `22.12+`.
+
 ## Technology
 
-- **Frontend:** HTML, CSS, and browser JavaScript
+- **Frontend:** React, Vite, CSS, Chart.js, and Lucide React
 - **Backend:** Node.js, Express 4, CORS, and body-parser
 - **Database:** MongoDB through Mongoose
 - **Authentication storage:** Browser `localStorage`; there is no session or JWT layer
@@ -50,9 +81,9 @@ The stylesheets in `CSS/` duplicate the stylesheets in `HTML/`. The pages curren
 
 ## Prerequisites
 
-Install the following before running the project:
+Install the following before running the full project:
 
-- Node.js 18 or newer and npm
+- Node.js 20.19 or newer and npm
 - MongoDB running locally, or a MongoDB connection string
 - Python, plus the dependencies required by the missing detector script, if video detection is enabled
 - Twilio credentials for SMS booking
@@ -83,14 +114,21 @@ Do not commit real credentials, SMTP passwords, or model files.
 
 ## Installation
 
-From PowerShell at the repository root:
+For the current React/Vite frontend, run this from PowerShell at the repository root:
+
+```powershell
+npm install
+npm run dev
+```
+
+For the optional backend, run:
 
 ```powershell
 Set-Location backend
 npm install
 ```
 
-The root `package-lock.json` does not describe the backend dependencies. Install and run Node commands from `backend/`.
+The root `package-lock.json` describes the React/Vite frontend dependencies. The backend has its own `backend/package-lock.json`.
 
 ## Running the Backend
 
@@ -103,7 +141,13 @@ node server.js
 
 The API listens on `http://localhost:5000` unless `PORT` is changed. A successful startup prints a MongoDB connection message and a server-running message.
 
-There is no frontend build system or static-file server in this repository. Open the pages from `HTML/` in a browser, or serve the repository with a local static server. The frontend makes requests to `http://localhost:5000`, so the backend must be running separately.
+The current frontend has a Vite build system at the repository root. Start it with:
+
+```powershell
+npm run dev
+```
+
+The frontend makes requests to `http://localhost:5050` by default unless `VITE_API_URL` is configured, so the backend must be running separately for backend-powered flows.
 
 Example static-server option:
 
