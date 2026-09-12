@@ -221,16 +221,23 @@ textarea {
   transform: translate(-50%, 0);
 }
 
-.impact-dropdown a {
+.impact-dropdown a,
+.impact-dropdown button {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
+  border: 0;
   padding: 10px 12px;
   border-radius: 9px;
   color: var(--pine);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
   font-size: 12px;
   font-weight: 700;
   line-height: 1.2;
+  text-align: left;
   text-transform: none;
   white-space: nowrap;
 }
@@ -257,7 +264,9 @@ textarea {
 }
 
 .impact-dropdown a:hover,
-.impact-dropdown a:focus-visible {
+.impact-dropdown a:focus-visible,
+.impact-dropdown button:hover,
+.impact-dropdown button:focus-visible {
   background: rgba(234, 244, 230, 0.8);
   outline: none;
 }

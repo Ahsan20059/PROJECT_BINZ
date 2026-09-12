@@ -13,7 +13,14 @@ import {
   Sprout,
 } from 'lucide-react';
 
-export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) {
+export default function Header({
+  coins,
+  onOpenAccount,
+  onOpenTicket,
+  onOpenChat,
+  onSignOut,
+  isSignedIn,
+}) {
   const [navOpen, setNavOpen] = useState(false);
   const [impactOpen, setImpactOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
@@ -39,6 +46,11 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
     setNavOpen(false);
     setImpactOpen(false);
     setServiceOpen(false);
+  }
+
+  function handleMenuAction(action) {
+    handleNavLinkClick();
+    action?.();
   }
 
   function handleImpactToggle(event) {
@@ -116,18 +128,18 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
             Service <ChevronDown size={15} aria-hidden="true" />
           </a>
           <div className="impact-dropdown service-dropdown" id="service-dropdown" role="menu">
-            <a href="#service" role="menuitem" onClick={handleNavLinkClick}>
+            <button type="button" role="menuitem" onClick={() => handleMenuAction(onOpenTicket)}>
               <span className="impact-icon"><MailCheck size={15} /></span>
               <span className="impact-item-title">E-waste ticket</span>
-            </a>
+            </button>
             <a href="#ewaste-tracker" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><Laptop size={15} /></span>
               <span className="impact-item-title">Track e-waste</span>
             </a>
-            <a href="#service" role="menuitem" onClick={handleNavLinkClick}>
+            <button type="button" role="menuitem" onClick={() => handleMenuAction(onOpenChat)}>
               <span className="impact-icon"><MessageCircle size={15} /></span>
               <span className="impact-item-title">Help and FAQ</span>
-            </a>
+            </button>
           </div>
         </div>
       </nav>
