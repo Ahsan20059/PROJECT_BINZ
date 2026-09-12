@@ -13,6 +13,8 @@
 - Tracker autoplay video source: `C:\Users\priya\OneDrive\Desktop\BinZ Promotional Video.mp4`
 - Ticket drawer opacity reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-00bc2903-cf9a-445e-a2c9-737c20957c63.png`
 - Service dropdown reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-9c7f69a6-b3c1-4c9d-876a-ae6df289fad4.png`
+- Service dropdown cleanup reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-c015ccfb-cf1e-4465-999b-6b6dbf7d1ec9.png`
+- Impact dropdown alignment reference: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-0929f388-2e8c-4169-a5ee-2edcb416c9fc.png`
 - Page style examples: `C:\Users\priya\AppData\Local\Temp\codex-clipboard-bb8fd4fd-26a7-4479-8f0a-43c55c7779d7.png`, `C:\Users\priya\AppData\Local\Temp\codex-clipboard-2b3144e5-0942-4847-a6f9-1e2b23ab4b22.png`
 
 **Implementation Evidence**
@@ -31,7 +33,8 @@
 
 **Interactions Tested**
 - `Track your E-waste` card is visible in the Service Hub.
-- Service navbar dropdown check: clicking `SERVICE` opens a dropdown with `Service hub`, `E-waste ticket`, `Track e-waste`, and `Help and FAQ`; computed opacity is `1`, pointer events are `auto`, and `aria-expanded` is `true`.
+- Service navbar dropdown check: clicking `SERVICE` opens a dropdown with `E-waste ticket`, `Track e-waste`, and `Help and FAQ`; `Service hub` has been removed.
+- Dropdown alignment check: both `IMPACT` and `SERVICE` dropdown rows now use flex alignment with a fixed-width icon column, an 8px gap, and cleaned label text so icons line up with the text.
 - Ticket drawer opacity check: opening `Open ticket` renders `#ticketPanel.open` with background `rgba(251, 250, 242, 0.98)`, reducing background text visibility from the page underneath.
 - Button top positions in the Service Hub were aligned at the same y-coordinate in the browser: `Open ticket`, `Open account`, `Open FAQs`, and `Open tracker`.
 - The `Open tracker` CTA navigates to `http://localhost:5503/index.html#ewaste-tracker`.
@@ -61,6 +64,8 @@
 **Implementation Checklist**
 - Added a fourth Service Hub card named `Track your E-waste`.
 - Added a Service navbar dropdown that visually matches the Impact dropdown.
+- Removed `Service hub` from the Service navbar dropdown.
+- Aligned the Impact and Service dropdown icons with their text labels.
 - Increased the FAQ and ticket drawer opacity so underlying page text is no longer visible through the panel.
 - Moved the e-waste tracker design into a reusable `EWasteTracker` component.
 - Routed `Open tracker` to the standalone `#ewaste-tracker` page.

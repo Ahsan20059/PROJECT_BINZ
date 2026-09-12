@@ -93,15 +93,15 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
           <div className="impact-dropdown" id="impact-dropdown" role="menu">
             <a href="#certifications" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><Award size={15} /></span>
-              <span className="impact-item-title">  Certifications</span>
+              <span className="impact-item-title">Certifications</span>
             </a>
             <a href="#services" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><Layers size={15} /></span>
-              <span className="impact-item-title">  Other services</span>
+              <span className="impact-item-title">Other services</span>
             </a>
             <a href="#learn" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><Sprout size={15} /></span> 
-              <span className="impact-item-title">  Know more</span>
+              <span className="impact-item-title">Know more</span>
             </a>
           </div>
         </div>
@@ -117,20 +117,16 @@ export default function Header({ coins, onOpenAccount, onSignOut, isSignedIn }) 
           </a>
           <div className="impact-dropdown service-dropdown" id="service-dropdown" role="menu">
             <a href="#service" role="menuitem" onClick={handleNavLinkClick}>
-              <span className="impact-icon"><Layers size={15} /></span>
-              <span className="impact-item-title">  Service hub</span>
-            </a>
-            <a href="#service" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><MailCheck size={15} /></span>
-              <span className="impact-item-title">  E-waste ticket</span>
+              <span className="impact-item-title">E-waste ticket</span>
             </a>
             <a href="#ewaste-tracker" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><Laptop size={15} /></span>
-              <span className="impact-item-title">  Track e-waste</span>
+              <span className="impact-item-title">Track e-waste</span>
             </a>
             <a href="#service" role="menuitem" onClick={handleNavLinkClick}>
               <span className="impact-icon"><MessageCircle size={15} /></span>
-              <span className="impact-item-title">  Help and FAQ</span>
+              <span className="impact-item-title">Help and FAQ</span>
             </a>
           </div>
         </div>

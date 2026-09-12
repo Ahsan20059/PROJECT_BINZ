@@ -222,13 +222,38 @@ textarea {
 }
 
 .impact-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 12px;
   border-radius: 9px;
   color: var(--pine);
   font-size: 12px;
   font-weight: 700;
+  line-height: 1.2;
   text-transform: none;
   white-space: nowrap;
+}
+
+.impact-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.impact-icon svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.2;
+}
+
+.impact-item-title {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
 }
 
 .impact-dropdown a:hover,
