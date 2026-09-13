@@ -2060,6 +2060,12 @@ textarea:focus {
   font-weight: 900;
 }
 
+.impact-reward-note {
+  margin: -12px 0 24px;
+  color: var(--moss);
+  font-weight: 700;
+}
+
 .chart-layout {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;

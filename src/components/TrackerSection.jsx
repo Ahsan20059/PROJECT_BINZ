@@ -157,6 +157,7 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [solidWaste, setSolidWaste] = useState('');
   const [eWaste, setEWaste] = useState('');
+  const [rewardMessage, setRewardMessage] = useState('');
 
   const lineRef = useRef(null);
   const pieRef = useRef(null);
@@ -244,9 +245,12 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
     };
     if (!entry.solid && !entry.ewaste) return;
     const next = [...entries, entry];
+    const carbonSaved = entry.solid * 0.9 + entry.ewaste * 2.6;
+    const coinsEarned = Math.round(carbonSaved * 10);
     setEntries(next);
     localStorage.setItem('impactEntries', JSON.stringify(next));
-    updateCoins(coins + Math.ceil(entry.solid + entry.ewaste));
+    updateCoins(coins + coinsEarned);
+    setRewardMessage(`${carbonSaved.toFixed(1)} kg CO₂ saved — ${coinsEarned.toLocaleString()} Z-Coins added.`);
     setSolidWaste('');
     setEWaste('');
   }
@@ -290,6 +294,7 @@ export default function TrackerSection({ entries, setEntries, tickets, updateCoi
       <div className="impact-summary">
         Total CO2 emissions reduced: <strong id="co2Total">{co2} kg</strong>
       </div>
+      <p className="impact-reward-note">Earn 10 Z-Coins for every kg of CO₂ saved.{rewardMessage && ` ${rewardMessage}`}</p>
       <div className="chart-layout">
         <article className="chart-card">
           <h3>CO2 reduction over time</h3>

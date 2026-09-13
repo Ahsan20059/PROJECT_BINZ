@@ -44,7 +44,8 @@ export default function Header({
     return {
       co2: co2.toFixed(1),
       waste: (demoImpactStats.solidWaste + demoImpactStats.ewaste + totals.solid + totals.ewaste).toFixed(1),
-      trees: Math.max(1, Math.round(co2 / 21.7)),
+      coins: Math.round(co2 * 10),
+      trees: (co2 / 1000).toFixed(2),
     };
   }, [impactEntries]);
 
@@ -117,7 +118,7 @@ export default function Header({
     setImpactOpen(false);
   }
 
-  const shareCopy = `I have helped BinZ divert ${impact.waste} kg of waste and reduce ${impact.co2} kg of CO₂ — about ${impact.trees} trees' annual CO₂ impact. 🌱`;
+  const shareCopy = `I have helped BinZ divert ${impact.waste} kg of waste and save ${impact.co2} kg of carbon (CO₂) with BinZ. That earns ${impact.coins.toLocaleString()} Z‑Coins at 10 Z‑Coins per kg CO₂. 🌱`;
 
   async function shareImpact(destination) {
     const pageUrl = window.location.origin;
@@ -268,18 +269,20 @@ export default function Header({
             <aside className="profile-impact-card" aria-label="Your environmental impact">
               <div className="impact-card-hero">
                 <div className="impact-tree-art" aria-hidden="true">
-                  <TreePine size={42} />
+                  <Leaf size={42} />
                   <Recycle size={17} />
                 </div>
                 <div>
                   <p>Your total impact</p>
-                  <strong>{impact.trees} trees</strong>
-                  <span>CO₂-equivalent saved</span>
+                  <strong>{impact.co2} kg CO₂</strong>
+                  <span>carbon saved</span>
                 </div>
               </div>
               <div className="impact-card-stats">
                 <span><Leaf size={16} aria-hidden="true" /><strong>{impact.co2} kg</strong> CO₂ reduced</span>
                 <span><Recycle size={16} aria-hidden="true" /><strong>{impact.waste} kg</strong> waste diverted</span>
+                <span><Sprout size={16} aria-hidden="true" /><strong>{impact.coins.toLocaleString()} Z-Coins</strong> at 10 per kg CO₂</span>
+                <span><TreePine size={16} aria-hidden="true" /><strong>{impact.trees} trees</strong> equivalent (1 per tonne CO₂)</span>
               </div>
               <div className="impact-share-row" aria-label="Share your impact">
                 <button type="button" onClick={() => shareImpact('native')} aria-label="Share your impact">
