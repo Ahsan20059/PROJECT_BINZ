@@ -21,9 +21,13 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
+// Vercel gives each deployment a project-specific HTTPS URL. Allow only this
+// project's production and deployment URLs so preview builds can call the API.
+const isBinzVercelDeployment = (origin) =>
+    /^https:\/\/project-binz(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(origin);
 app.use(cors({
     origin(origin, callback) {
-        if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin)) {
+        if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin) || isBinzVercelDeployment(origin)) {
             return callback(null, true);
         }
         return callback(new Error('Origin is not allowed by CORS.'));
