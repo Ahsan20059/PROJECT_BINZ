@@ -94,6 +94,29 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5050';
+
+    fetch(`${apiUrl}/session`, { credentials: 'include' })
+      .then((response) => {
+        if (!response.ok) throw new Error('No active session');
+        return response.json();
+      })
+      .then((account) => {
+        setFirstName(account.firstName || 'Guest');
+        localStorage.setItem('firstName', account.firstName || '');
+        localStorage.setItem('lastName', account.lastName || '');
+        localStorage.setItem('email', account.email || '');
+        localStorage.setItem('state', account.state || '');
+        updateCoins(account.coins, { persist: false });
+      })
+      .catch(() => {
+        ['firstName', 'lastName', 'email', 'state'].forEach((key) => localStorage.removeItem(key));
+        setFirstName('Guest');
+        updateCoins(0, { persist: false });
+      });
+  }, []);
+
+  useEffect(() => {
     function handleHashChange() {
       setCurrentPage(window.location.hash);
       refreshCoins();
@@ -179,6 +202,10 @@ function App() {
   }
 
   function handleSignOut() {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(() => {});
     ['firstName', 'lastName', 'email', 'state'].forEach((key) => localStorage.removeItem(key));
     setFirstName('Guest');
     updateCoins(0, { persist: false });
@@ -299,12 +326,9 @@ function App() {
       />
       <main>
         <HeroSection
-          coins={coins}
           entries={entries}
-          tickets={tickets}
           pickupStatus={pickupStatus}
           setPickupStatus={setPickupStatus}
-          updateCoins={updateCoins}
         />
         <TrustRow />
         <StatsBand entries={entries} tickets={tickets} />

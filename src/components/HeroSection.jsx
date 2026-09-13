@@ -13,8 +13,6 @@ function computeImpact(entries) {
 
 export default function HeroSection({
   entries,
-  updateCoins,
-  coins,
   pickupStatus,
   setPickupStatus,
 }) {
@@ -74,11 +72,10 @@ export default function HeroSection({
     localStorage.setItem('pickupBooking', JSON.stringify(booking));
     localStorage.setItem(rateLimitKey, String(Date.now()));
 
-    updateCoins(coins + 2);
     setShowCalendar(false);
     setIsBooking(false);
     setPickupStatus({
-      msg: 'Pickup booked successfully. +2 Z-Coins awarded.',
+      msg: 'Pickup booked successfully.',
       error: false,
     });
   }

@@ -12,12 +12,74 @@ const nodemailer = require("nodemailer");
 const rateLimit = require('express-rate-limit');
 const validator = require('validator');
 const xss = require('xss');
+const jwt = require('jsonwebtoken');
 dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+app.use(cors({
+    origin(origin, callback) {
+        if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Origin is not allowed by CORS.'));
+    },
+    credentials: true,
+}));
 app.use(bodyParser.json());
+
+const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
+const SESSION_COOKIE_NAME = 'binz_session';
+const sessionCookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: SESSION_DURATION_MS,
+};
+const clearSessionCookieOptions = {
+    httpOnly: sessionCookieOptions.httpOnly,
+    secure: sessionCookieOptions.secure,
+    sameSite: sessionCookieOptions.sameSite,
+};
+
+function getJwtSecret() {
+    if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+    if (process.env.NODE_ENV === 'production') {
+        throw new Error('JWT_SECRET must be set in production.');
+    }
+    return 'binz-development-session-secret';
+}
+
+function startSession(res, user) {
+    const token = jwt.sign(
+        { sub: user._id.toString(), email: user.email },
+        getJwtSecret(),
+        { expiresIn: '24h' },
+    );
+    res.cookie(SESSION_COOKIE_NAME, token, sessionCookieOptions);
+}
+
+function requireSession(req, res, next) {
+    const token = req.headers.cookie
+        ?.split(';')
+        .map((cookie) => cookie.trim())
+        .find((cookie) => cookie.startsWith(`${SESSION_COOKIE_NAME}=`))
+        ?.slice(`${SESSION_COOKIE_NAME}=`.length);
+
+    if (!token) return res.status(401).json({ message: 'Authentication required.' });
+
+    try {
+        req.session = jwt.verify(token, getJwtSecret());
+        next();
+    } catch {
+        res.clearCookie(SESSION_COOKIE_NAME, clearSessionCookieOptions);
+        return res.status(401).json({ message: 'Session expired or invalid.' });
+    }
+}
 
 const accountSid = process.env.twilioAccountSid;
 const authToken = process.env.twilioAuthToken;
@@ -272,6 +334,7 @@ app.post("/register", registrationLimiter, async (req, res) => {
             coins: 5
         });
         const savedUser = await newUser.save();
+        startSession(res, savedUser);
         res.status(201).json({
             message: "✅ Registration successful! 5 bonus coins added!",
             User: {
@@ -308,6 +371,7 @@ app.post("/login", async (req, res) => {
             return res.status(401).json({ message: "❌ Invalid credentials!" });
         }
 
+        startSession(res, user);
         res.status(200).json({
             message: "✅ Login successful!",
             firstName: user.firstName,
@@ -321,6 +385,33 @@ app.post("/login", async (req, res) => {
         console.error("❌ Login error:", error);
         res.status(500).json({ message: "❌ Server error" });
     }
+});
+
+app.get('/session', requireSession, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.sub);
+        if (!user) {
+            res.clearCookie(SESSION_COOKIE_NAME, clearSessionCookieOptions);
+            return res.status(401).json({ message: 'Session user no longer exists.' });
+        }
+
+        res.status(200).json({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            state: user.state,
+            phoneNumber: user.phoneNumber,
+            coins: user.coins || 0,
+        });
+    } catch (error) {
+        console.error('❌ Session lookup error:', error);
+        res.status(500).json({ message: '❌ Server error' });
+    }
+});
+
+app.post('/logout', (req, res) => {
+    res.clearCookie(SESSION_COOKIE_NAME, clearSessionCookieOptions);
+    res.status(204).end();
 });
 
 app.post("/sendSMS", async (req, res) => {

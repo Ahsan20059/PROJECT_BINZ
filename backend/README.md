@@ -20,7 +20,7 @@ Server runs on `http://localhost:5000` by default (`PORT` in `.env` to change it
 
 ## Auth model
 
-`/register` requires a strong password and stores only its bcrypt hash. `/login` requires the email and password, verifies the password against that hash, and rejects both nonexistent accounts and incorrect credentials. New accounts start with five reward coins; users do not receive coins merely by logging in.
+`/register` requires a strong password and stores only its bcrypt hash. `/login` requires the email and password, verifies the password against that hash, and rejects both nonexistent accounts and incorrect credentials. Both successful registration and login set a signed, HTTP-only `binz_session` cookie which expires after 24 hours. Set `JWT_SECRET` to a long random value and `CLIENT_ORIGIN` to the frontend URL in production. New accounts start with five reward coins; users do not receive coins merely by logging in.
 
 ## Endpoints
 
@@ -28,6 +28,8 @@ Server runs on `http://localhost:5000` by default (`PORT` in `.env` to change it
 |---|---|---|
 | POST | `/register` | Create account (firstName, lastName, email, state) |
 | POST | `/login` | Fetch account by email |
+| GET | `/session` | Return the signed-in account from the session cookie |
+| POST | `/logout` | Clear the session cookie |
 | POST | `/sendSMS` | Send pickup-confirmation SMS via Twilio |
 | POST | `/storePhoneNumber` | Save a phone number to a user |
 | GET | `/leaderboard` | Top 3 users by coins |

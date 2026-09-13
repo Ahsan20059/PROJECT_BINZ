@@ -28,6 +28,7 @@ export default function AuthDrawer({ isOpen, onClose, updateCoins, setFirstName 
           };
       const response = await fetch(`${apiUrl}${endpoint}`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });

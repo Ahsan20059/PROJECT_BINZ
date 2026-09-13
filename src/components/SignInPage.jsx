@@ -12,6 +12,7 @@ export default function SignInPage({ onAuthenticated }) {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       });
