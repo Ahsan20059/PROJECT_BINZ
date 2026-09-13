@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Award,
   ChevronDown,
@@ -10,9 +10,14 @@ import {
   MailCheck,
   Menu,
   MessageCircle,
+  Leaf,
+  Recycle,
+  Share2,
   Sprout,
+  TreePine,
   UserRound,
 } from 'lucide-react';
+import { demoImpactStats } from '../data';
 
 export default function Header({
   coins,
@@ -21,11 +26,27 @@ export default function Header({
   onOpenChat,
   onSignOut,
   isSignedIn,
+  impactEntries = [],
 }) {
   const [navOpen, setNavOpen] = useState(false);
   const [impactOpen, setImpactOpen] = useState(false);
   const [serviceOpen, setServiceOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState('');
+
+  const impact = useMemo(() => {
+    const totals = impactEntries.reduce((current, entry) => ({
+      solid: current.solid + Number(entry?.solid || 0),
+      ewaste: current.ewaste + Number(entry?.ewaste || 0),
+    }), { solid: 0, ewaste: 0 });
+    const co2 = demoImpactStats.co2Reduced + totals.solid * 0.9 + totals.ewaste * 2.6;
+
+    return {
+      co2: co2.toFixed(1),
+      waste: (demoImpactStats.solidWaste + demoImpactStats.ewaste + totals.solid + totals.ewaste).toFixed(1),
+      trees: Math.max(1, Math.round(co2 / 21.7)),
+    };
+  }, [impactEntries]);
 
   useEffect(() => {
     function handleScroll() {
@@ -94,6 +115,39 @@ export default function Header({
     event.preventDefault();
     setServiceOpen(!serviceOpen);
     setImpactOpen(false);
+  }
+
+  const shareCopy = `I have helped BinZ divert ${impact.waste} kg of waste and reduce ${impact.co2} kg of CO₂ — about ${impact.trees} trees' annual CO₂ impact. 🌱`;
+
+  async function shareImpact(destination) {
+    const pageUrl = window.location.origin;
+    const message = `${shareCopy} ${pageUrl}`;
+
+    if (destination === 'native' && navigator.share) {
+      try {
+        await navigator.share({ title: 'My BinZ impact', text: shareCopy, url: pageUrl });
+        setShareFeedback('Impact shared');
+      } catch {
+        setShareFeedback('');
+      }
+      return;
+    }
+
+    if (destination === 'instagram') {
+      try {
+        await navigator.clipboard.writeText(message);
+        setShareFeedback('Caption copied — paste it into Instagram');
+      } catch {
+        setShareFeedback('Copy the impact details to share on Instagram');
+      }
+      window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    const shareUrl = destination === 'x'
+      ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`
+      : `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(shareUrl, '_blank', 'noopener,noreferrer');
   }
 
   return (
@@ -192,13 +246,42 @@ export default function Header({
       </div>
       <div className="account-actions">
         {isSignedIn && (
-          <span
-            className="profile-placeholder"
-            aria-label="Profile picture placeholder"
-            title="Profile"
-          >
-            <UserRound size={25} strokeWidth={2.2} aria-hidden="true" />
-          </span>
+          <div className="profile-impact">
+            <span
+              className="profile-placeholder"
+              tabIndex="0"
+              aria-label="Profile and environmental impact"
+              title="View your environmental impact"
+            >
+              <UserRound size={25} strokeWidth={2.2} aria-hidden="true" />
+            </span>
+            <aside className="profile-impact-card" aria-label="Your environmental impact">
+              <div className="impact-card-hero">
+                <div className="impact-tree-art" aria-hidden="true">
+                  <TreePine size={42} />
+                  <Recycle size={17} />
+                </div>
+                <div>
+                  <p>Your total impact</p>
+                  <strong>{impact.trees} trees</strong>
+                  <span>CO₂-equivalent saved</span>
+                </div>
+              </div>
+              <div className="impact-card-stats">
+                <span><Leaf size={16} aria-hidden="true" /><strong>{impact.co2} kg</strong> CO₂ reduced</span>
+                <span><Recycle size={16} aria-hidden="true" /><strong>{impact.waste} kg</strong> waste diverted</span>
+              </div>
+              <div className="impact-share-row" aria-label="Share your impact">
+                <button type="button" onClick={() => shareImpact('native')} aria-label="Share your impact">
+                  <Share2 size={16} aria-hidden="true" /> Share
+                </button>
+                <button type="button" onClick={() => shareImpact('x')} aria-label="Share on X">𝕏</button>
+                <button type="button" onClick={() => shareImpact('instagram')} aria-label="Share on Instagram" className="instagram-share">◎</button>
+                <button type="button" onClick={() => shareImpact('whatsapp')} aria-label="Share on WhatsApp"><MessageCircle size={16} aria-hidden="true" /></button>
+              </div>
+              {shareFeedback && <span className="impact-share-feedback" role="status">{shareFeedback}</span>}
+            </aside>
+          </div>
         )}
         <button
           className="icon-button"
