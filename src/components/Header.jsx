@@ -21,6 +21,7 @@ export default function Header({
   onOpenChat,
   onSignOut,
   isSignedIn,
+  firstName,
 }) {
   const [navOpen, setNavOpen] = useState(false);
   const [impactOpen, setImpactOpen] = useState(false);
@@ -192,8 +193,12 @@ export default function Header({
       </div>
       <div className="account-actions">
         {isSignedIn && (
-          <span className="profile-placeholder" aria-label="Profile picture placeholder" title="Profile">
-            <UserRound size={20} aria-hidden="true" />
+          <span
+            className="profile-placeholder"
+            aria-label={`${firstName}'s profile picture placeholder`}
+            title={`${firstName}'s profile`}
+          >
+            <span className="profile-initial" aria-hidden="true">{firstName?.trim()?.charAt(0).toUpperCase() || <UserRound size={20} />}</span>
           </span>
         )}
         <button
