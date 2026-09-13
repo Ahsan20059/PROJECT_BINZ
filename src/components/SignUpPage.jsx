@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, UserPlus } from 'lucide-react';
+import { apiUrl } from '../api';
 
 export default function SignUpPage({ onAuthenticated }) {
   const [name, setName] = useState('');
@@ -11,7 +12,7 @@ export default function SignUpPage({ onAuthenticated }) {
     event.preventDefault();
     setStatus('Creating your account...');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/register`, {
+      const response = await fetch(apiUrl('/register'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

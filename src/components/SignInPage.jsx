@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, LogIn } from 'lucide-react';
+import { apiUrl } from '../api';
 
 export default function SignInPage({ onAuthenticated }) {
   const [email, setEmail] = useState('');
@@ -10,7 +11,7 @@ export default function SignInPage({ onAuthenticated }) {
     event.preventDefault();
     setStatus('Signing in...');
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/login`, {
+      const response = await fetch(apiUrl('/login'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

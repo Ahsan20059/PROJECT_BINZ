@@ -9,7 +9,7 @@ cp .env.example .env   # then fill in MONGO_URI (and Twilio/Gmail if you want th
 npm start               # or: npm run dev (nodemon, auto-restart)
 ```
 
-Server runs on `http://localhost:5000` by default (`PORT` in `.env` to change it).
+Server runs on `http://localhost:5050` by default (`PORT` in `.env` to change it).
 
 ## Requirements
 
@@ -17,6 +17,10 @@ Server runs on `http://localhost:5000` by default (`PORT` in `.env` to change it
 - **Twilio** — optional. Without `twilioAccountSid` / `twilioAuthToken`, `POST /sendSMS` will fail but pickup booking on the frontend still succeeds (SMS is called best-effort).
 - **Gmail** — optional. Without `EMAIL_USER` / `EMAIL_PASS` (a Gmail **App Password**, not your login password), the ticket confirmation email will silently fail but the ticket is still created.
 - **Video upload (`POST /uploadVideo`)** — currently simulated: waits 5 seconds then awards a random 5-10 coins, no Python/detector script needed. Swap the `setTimeout` body in `server.js` for a real detection call whenever you're ready to wire that up.
+
+## Deploying separately from the frontend
+
+Deploy `backend/` as its own Node service and use its public **HTTPS** URL in the frontend deployment setting `VITE_API_URL`. Set these backend environment variables: `NODE_ENV=production`, `MONGO_URI`, `JWT_SECRET`, `CLIENT_ORIGIN` (the exact frontend URL), and `COOKIE_SAME_SITE=none`. Then verify the API at `https://your-backend.example.com/health` before deploying the frontend. Do not include a trailing slash in either deployment URL.
 
 ## Auth model
 

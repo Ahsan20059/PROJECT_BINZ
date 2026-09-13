@@ -42,7 +42,7 @@ This frontend uses Vite 8, so use Node.js `20.19+` or `22.12+`.
 - **Frontend:** React, Vite, CSS, Chart.js, and Lucide React
 - **Backend:** Node.js, Express 4, CORS, and body-parser
 - **Database:** MongoDB through Mongoose
-- **Authentication storage:** Browser `localStorage`; there is no session or JWT layer
+- **Authentication storage:** Signed, HTTP-only session cookie (24-hour expiry)
 - **Password security:** bcrypt hashing on registration
 - **External services:** Twilio SMS and Gmail SMTP
 - **Uploads:** Multer saves uploaded videos to `backend/uploads/`
@@ -108,7 +108,7 @@ EMAIL_USER=your-email@example.com
 EMAIL_PASS=your-email-app-password
 ```
 
-`MONGO_URI` defaults to `mongodb://localhost:27017/binzDB`. `PORT` defaults to `5000`.
+`MONGO_URI` defaults to `mongodb://localhost:27017/binzDB`. `PORT` defaults to `5050`.
 
 The current `backend/server.js` also contains hard-coded Twilio credentials. These credentials should be revoked/rotated immediately and replaced with environment variables such as:
 
@@ -155,7 +155,7 @@ The current frontend has a Vite build system at the repository root. Start it wi
 npm run dev
 ```
 
-The frontend makes requests to `http://localhost:5050` by default unless `VITE_API_URL` is configured, so the backend must be running separately for backend-powered flows.
+For local development the frontend requests `http://localhost:5050` by default. For a separate deployment, set the frontend deployment variable `VITE_API_URL` to the backend's public HTTPS URL, for example `https://binz-api.example.com`, then redeploy the frontend (Vite embeds this value during the build). On the backend set `NODE_ENV=production`, `CLIENT_ORIGIN` to the frontend's exact URL, `JWT_SECRET`, and `COOKIE_SAME_SITE=none`; verify the backend first at `/health`.
 
 Do not use `npx serve HTML` for the current frontend. Use `npm run dev` from the repository root.
 

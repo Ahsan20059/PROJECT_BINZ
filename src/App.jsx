@@ -23,6 +23,7 @@ import ChatDrawer from './components/ChatDrawer';
 import AuthDrawer from './components/AuthDrawer';
 import TicketDrawer from './components/TicketDrawer';
 import Scrim from './components/Scrim';
+import { apiUrl } from './api';
 
 const standalonePages = new Set([
   '#signin',
@@ -64,7 +65,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/getCoins/${encodeURIComponent(email)}`,
+        apiUrl(`/getCoins/${encodeURIComponent(email)}`),
       );
       if (!response.ok) throw new Error('Unable to load coin balance');
 
@@ -94,9 +95,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5050';
-
-    fetch(`${apiUrl}/session`, { credentials: 'include' })
+    Promise.resolve()
+      .then(() => fetch(apiUrl('/session'), { credentials: 'include' }))
       .then((response) => {
         if (!response.ok) throw new Error('No active session');
         return response.json();
@@ -165,11 +165,12 @@ function App() {
     const delta = next - coins;
     if (!persist || !email || delta === 0) return;
 
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/rewardCoins`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, coins: delta }),
-    })
+    Promise.resolve()
+      .then(() => fetch(apiUrl('/rewardCoins'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, coins: delta }),
+      }))
       .then((response) => {
         if (!response.ok) throw new Error('Unable to save coin balance');
         return response.json();
@@ -202,10 +203,12 @@ function App() {
   }
 
   function handleSignOut() {
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/logout`, {
-      method: 'POST',
-      credentials: 'include',
-    }).catch(() => {});
+    Promise.resolve()
+      .then(() => fetch(apiUrl('/logout'), {
+        method: 'POST',
+        credentials: 'include',
+      }))
+      .catch(() => {});
     ['firstName', 'lastName', 'email', 'state'].forEach((key) => localStorage.removeItem(key));
     setFirstName('Guest');
     updateCoins(0, { persist: false });

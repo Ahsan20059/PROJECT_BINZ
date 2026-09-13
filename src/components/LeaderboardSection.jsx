@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { apiUrl } from '../api';
 
 const medals = ['🥇', '🥈', '🥉'];
 
@@ -9,9 +10,7 @@ export default function LeaderboardSection() {
 
   const loadLeaderboard = useCallback(async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}/leaderboard`,
-      );
+      const response = await fetch(apiUrl('/leaderboard'));
 
       if (!response.ok) throw new Error('Unable to load leaderboard');
 

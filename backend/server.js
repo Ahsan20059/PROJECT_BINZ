@@ -34,10 +34,12 @@ app.use(bodyParser.json());
 
 const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
 const SESSION_COOKIE_NAME = 'binz_session';
+const cookieSameSite = process.env.COOKIE_SAME_SITE || (process.env.NODE_ENV === 'production' ? 'none' : 'lax');
 const sessionCookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    // Separate frontend and API domains need SameSite=None; HTTPS is required by browsers for that setting.
+    secure: process.env.NODE_ENV === 'production' || cookieSameSite === 'none',
+    sameSite: cookieSameSite,
     maxAge: SESSION_DURATION_MS,
 };
 const clearSessionCookieOptions = {
@@ -99,6 +101,10 @@ const connectDB = async () => {
     }
 };
 connectDB();
+
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
 
 const registrationLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,

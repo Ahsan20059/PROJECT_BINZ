@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { LogIn, UserPlus, X } from 'lucide-react';
+import { apiUrl } from '../api';
 
 export default function AuthDrawer({ isOpen, onClose, updateCoins, setFirstName }) {
   const [mode, setMode] = useState('login');
@@ -13,7 +14,6 @@ export default function AuthDrawer({ isOpen, onClose, updateCoins, setFirstName 
   async function handleSubmit(e) {
     e.preventDefault();
     const normalizedEmail = email.trim().toLowerCase();
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5050';
 
     try {
       const endpoint = mode === 'login' ? '/login' : '/register';
@@ -26,7 +26,7 @@ export default function AuthDrawer({ isOpen, onClose, updateCoins, setFirstName 
             password,
             state: state.trim(),
           };
-      const response = await fetch(`${apiUrl}${endpoint}`, {
+      const response = await fetch(apiUrl(endpoint), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
