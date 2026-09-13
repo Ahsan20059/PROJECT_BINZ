@@ -281,7 +281,6 @@ function App() {
           onOpenChat={() => handleOpenDrawer('chatDrawer')}
           onSignOut={handleSignOut}
           isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
-          firstName={firstName}
         />
         {page}
         {renderDrawers()}
@@ -327,7 +326,6 @@ function App() {
         onOpenChat={() => handleOpenDrawer('chatDrawer')}
         onSignOut={handleSignOut}
         isSignedIn={firstName !== 'Guest' && Boolean(localStorage.getItem('email'))}
-        firstName={firstName}
       />
       <main>
         <HeroSection
