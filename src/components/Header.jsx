@@ -123,24 +123,34 @@ export default function Header({
     const pageUrl = window.location.origin;
     const message = `${shareCopy} ${pageUrl}`;
 
-    if (destination === 'native' && navigator.share) {
+    if (destination === 'native') {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: 'My BinZ impact', text: shareCopy, url: pageUrl });
+          setShareFeedback('Impact shared');
+        } catch {
+          setShareFeedback('');
+        }
+        return;
+      }
+
       try {
-        await navigator.share({ title: 'My BinZ impact', text: shareCopy, url: pageUrl });
-        setShareFeedback('Impact shared');
+        await navigator.clipboard.writeText(message);
+        setShareFeedback('Impact details copied to share anywhere');
       } catch {
-        setShareFeedback('');
+        setShareFeedback('Choose X, Instagram, or WhatsApp below');
       }
       return;
     }
 
     if (destination === 'instagram') {
+      window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
       try {
         await navigator.clipboard.writeText(message);
         setShareFeedback('Caption copied — paste it into Instagram');
       } catch {
         setShareFeedback('Copy the impact details to share on Instagram');
       }
-      window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
       return;
     }
 
