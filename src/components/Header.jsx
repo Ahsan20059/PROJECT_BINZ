@@ -279,9 +279,7 @@ export default function Header({
                 </div>
               </div>
               <div className="impact-card-stats">
-                <span><Leaf size={16} aria-hidden="true" /><strong>{impact.co2} kg</strong> CO₂ reduced</span>
                 <span><Recycle size={16} aria-hidden="true" /><strong>{impact.waste} kg</strong> waste diverted</span>
-                <span><Sprout size={16} aria-hidden="true" /><strong>{impact.coins.toLocaleString()} Z-Coins</strong> at 10 per kg CO₂</span>
                 <span><TreePine size={16} aria-hidden="true" /><strong>{impact.trees} trees</strong> equivalent (1 per tonne CO₂)</span>
               </div>
               <div className="impact-share-row" aria-label="Share your impact">
