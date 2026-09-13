@@ -3,6 +3,18 @@ import { apiUrl } from '../api';
 
 const medals = ['🥇', '🥈', '🥉'];
 
+function uniqueEntries(entries) {
+  const seenNames = new Set();
+
+  return entries.filter((entry) => {
+    const name = String(entry?.name || '').trim().toLocaleLowerCase();
+    if (!name || seenNames.has(name)) return false;
+
+    seenNames.add(name);
+    return true;
+  });
+}
+
 export default function LeaderboardSection() {
   const [entries, setEntries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +27,9 @@ export default function LeaderboardSection() {
       if (!response.ok) throw new Error('Unable to load leaderboard');
 
       const result = await response.json();
-      setEntries(result.leaderboard || []);
+      // Seed data and older accounts can contain the same display name more than
+      // once. Keep one row per name so the leaderboard never repeats a person.
+      setEntries(uniqueEntries(result.leaderboard || []));
       setHasError(false);
     } catch {
       setHasError(true);

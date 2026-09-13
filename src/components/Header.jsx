@@ -11,6 +11,7 @@ import {
   Menu,
   MessageCircle,
   Sprout,
+  UserRound,
 } from 'lucide-react';
 
 export default function Header({
@@ -189,16 +190,23 @@ export default function Header({
         <span id="coinBalance">{coins}</span>
         <span>Z-Coins</span>
       </div>
-      <button
-        className="icon-button"
-        id="accountButton"
-        type="button"
-        aria-label={isSignedIn ? 'Sign out' : 'Sign in'}
-        onClick={isSignedIn ? onSignOut : onOpenAccount}
-      >
-        {isSignedIn ? <LogOut size={18} /> : <LogIn size={18} />}
-        <span>{isSignedIn ? 'Sign out' : 'Sign in'}</span>
-      </button>
+      <div className="account-actions">
+        {isSignedIn && (
+          <span className="profile-placeholder" aria-label="Profile picture placeholder" title="Profile">
+            <UserRound size={20} aria-hidden="true" />
+          </span>
+        )}
+        <button
+          className="icon-button"
+          id="accountButton"
+          type="button"
+          aria-label={isSignedIn ? 'Sign out' : 'Sign in'}
+          onClick={isSignedIn ? onSignOut : onOpenAccount}
+        >
+          {isSignedIn ? <LogOut size={18} /> : <LogIn size={18} />}
+          <span>{isSignedIn ? 'Sign out' : 'Sign in'}</span>
+        </button>
+      </div>
     </header>
   );
 }
