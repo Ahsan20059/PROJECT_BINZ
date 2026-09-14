@@ -60,21 +60,53 @@ function getJwtSecret() {
     return 'binz-development-session-secret';
 }
 
+const ADMIN_EMAIL = 'aman.bhutani2007@gmail.com';
+
+function isAdminEmail(email) {
+    return typeof email === 'string' && email.trim().toLowerCase() === ADMIN_EMAIL;
+}
+
+async function enforceAdminRole(user) {
+    const admin = isAdminEmail(user.email);
+    if (user.admin !== admin) {
+        user.admin = admin;
+        await user.save();
+    }
+    return user;
+}
+
+function publicAccount(user) {
+    return {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        state: user.state,
+        phoneNumber: user.phoneNumber,
+        coins: user.coins || 0,
+        admin: user.admin === true,
+    };
+}
+
 function startSession(res, user) {
     const token = jwt.sign(
-        { sub: user._id.toString(), email: user.email },
+        { sub: user._id.toString(), email: user.email, admin: user.admin === true },
         getJwtSecret(),
         { expiresIn: '24h' },
     );
     res.cookie(SESSION_COOKIE_NAME, token, sessionCookieOptions);
+    return token;
 }
 
 function requireSession(req, res, next) {
-    const token = req.headers.cookie
+    const bearerToken = req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization.slice('Bearer '.length)
+        : null;
+    const cookieToken = req.headers.cookie
         ?.split(';')
         .map((cookie) => cookie.trim())
         .find((cookie) => cookie.startsWith(`${SESSION_COOKIE_NAME}=`))
         ?.slice(`${SESSION_COOKIE_NAME}=`.length);
+    const token = bearerToken || cookieToken;
 
     if (!token) return res.status(401).json({ message: 'Authentication required.' });
 
@@ -142,6 +174,8 @@ const UserSchema = new mongoose.Schema({
     state: String,
     phoneNumber: String,
     coins: { type: Number, default: 0 },
+    // This is server-owned. The app never accepts an admin value from a request.
+    admin: { type: Boolean, default: false },
 });
 const User = mongoose.model("User", UserSchema);
 
@@ -290,19 +324,24 @@ function buildTrackingResponse(ticket, options = {}) {
     return response;
 }
 
-function requireAdmin(req, res, next) {
-    const expectedKey = process.env.ADMIN_API_KEY;
-    const providedKey = req.header("x-admin-key");
+async function requireAdmin(req, res, next) {
+    requireSession(req, res, async () => {
+        try {
+            const user = await User.findById(req.session.sub);
+            if (!user) return res.status(401).json({ message: "Authentication required." });
 
-    if (!expectedKey) {
-        return res.status(500).json({ message: "Admin API key is not configured on the server." });
-    }
+            await enforceAdminRole(user);
+            if (user.admin !== true) {
+                return res.status(403).json({ message: "Administrator access required." });
+            }
 
-    if (!providedKey || providedKey !== expectedKey) {
-        return res.status(401).json({ message: "Unauthorized admin request." });
-    }
-
-    next();
+            req.admin = user;
+            next();
+        } catch (error) {
+            console.error("Admin authorization error:", error);
+            return res.status(500).json({ message: "Unable to verify administrator access." });
+        }
+    });
 }
 
 app.post("/register", registrationLimiter, async (req, res) => {
@@ -341,19 +380,17 @@ app.post("/register", registrationLimiter, async (req, res) => {
             email: sanitizedEmail.toLowerCase(),
             password: hashedPassword,
             state: sanitizedState,
-            coins: 5
+            coins: 5,
+            admin: isAdminEmail(sanitizedEmail),
         });
         const savedUser = await newUser.save();
-        startSession(res, savedUser);
+        const sessionToken = startSession(res, savedUser);
+        const account = publicAccount(savedUser);
         res.status(201).json({
             message: "✅ Registration successful! 5 bonus coins added!",
-            User: {
-                firstName: savedUser.firstName,
-                lastName: savedUser.lastName,
-                email: savedUser.email,
-                state: savedUser.state,
-                coins: savedUser.coins
-            }
+            User: account,
+            // Returned only for Flutter clients; browsers continue using the HTTP-only cookie.
+            ...(req.get('X-Client-Platform') === 'flutter' ? { sessionToken } : {}),
         });
 
     } catch (error) {
@@ -381,15 +418,12 @@ app.post("/login", async (req, res) => {
             return res.status(401).json({ message: "❌ Invalid credentials!" });
         }
 
-        startSession(res, user);
+        await enforceAdminRole(user);
+        const sessionToken = startSession(res, user);
         res.status(200).json({
             message: "✅ Login successful!",
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            state: user.state,
-            phoneNumber: user.phoneNumber,
-            coins: user.coins || 0,
+            ...publicAccount(user),
+            ...(req.get('X-Client-Platform') === 'flutter' ? { sessionToken } : {}),
         });
     } catch (error) {
         console.error("❌ Login error:", error);
@@ -405,14 +439,8 @@ app.get('/session', requireSession, async (req, res) => {
             return res.status(401).json({ message: 'Session user no longer exists.' });
         }
 
-        res.status(200).json({
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            state: user.state,
-            phoneNumber: user.phoneNumber,
-            coins: user.coins || 0,
-        });
+        await enforceAdminRole(user);
+        res.status(200).json(publicAccount(user));
     } catch (error) {
         console.error('❌ Session lookup error:', error);
         res.status(500).json({ message: '❌ Server error' });
