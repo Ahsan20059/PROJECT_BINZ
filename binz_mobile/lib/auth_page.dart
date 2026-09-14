@@ -113,8 +113,16 @@ class _AuthPageState extends State<AuthPage> {
                                 TextField(
                                     controller: email,
                                     keyboardType: TextInputType.emailAddress,
+                                    style: const TextStyle(
+                                        color: Color(0xFF1F3327),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
                                     decoration: const InputDecoration(
                                         labelText: 'Email',
+                                        labelStyle: TextStyle(
+                                            color: Color(0xFF476451),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
                                         border: OutlineInputBorder())),
                                 const SizedBox(height: 12),
                                 TextField(

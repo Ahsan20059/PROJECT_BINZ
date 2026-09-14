@@ -25,9 +25,13 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
 // project's production and deployment URLs so preview builds can call the API.
 const isBinzVercelDeployment = (origin) =>
     /^https:\/\/project-binz(?:-[a-z0-9-]+)?\.vercel\.app$/i.test(origin);
+// Flutter web uses a localhost port in development. This allows local testing
+// without opening production API access to arbitrary third-party sites.
+const isLocalFlutterWebOrigin = (origin) =>
+    /^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/i.test(origin);
 app.use(cors({
     origin(origin, callback) {
-        if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin) || isBinzVercelDeployment(origin)) {
+        if (!origin || process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin) || isBinzVercelDeployment(origin) || isLocalFlutterWebOrigin(origin)) {
             return callback(null, true);
         }
         return callback(new Error('Origin is not allowed by CORS.'));
